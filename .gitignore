@@ -8,3 +8,5 @@ py_real_output.json
 payload_ts.json
 payload_py.json
 payload_java.json
+
+*.json
