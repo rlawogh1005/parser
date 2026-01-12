@@ -1,0 +1,10 @@
+bin
+lib
+node_modules
+server.log
+test_endpoints.sh
+ts_real_output.json
+py_real_output.json
+payload_ts.json
+payload_py.json
+payload_java.json
