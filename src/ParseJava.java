@@ -26,7 +26,11 @@ public class ParseJava {
         String filePath = args[0];
         try {
             String code = new String(Files.readAllBytes(Paths.get(filePath)));
-            JavaParser javaParser = new JavaParser();
+            
+            com.github.javaparser.ParserConfiguration configuration = new com.github.javaparser.ParserConfiguration();
+            configuration.setLanguageLevel(com.github.javaparser.ParserConfiguration.LanguageLevel.JAVA_17);
+            JavaParser javaParser = new JavaParser(configuration);
+            
             ParseResult<CompilationUnit> result = javaParser.parse(code);
 
             if (result.isSuccessful() && result.getResult().isPresent()) {

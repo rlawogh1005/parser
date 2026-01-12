@@ -13,33 +13,26 @@ const JAVA_CP = `${path.join(LIB_DIR, 'javaparser-core.jar')}${path.delimiter}${
 let javaAvailable = false;
 try {
     if (!fs.existsSync(BIN_DIR)) fs.mkdirSync(BIN_DIR);
-    const javaHome = process.env.JAVA_HOME;
 
-    if (javaHome) {
-        const javac = path.join(javaHome, 'bin', 'javac.exe');
-        console.log(`Compiling Java with ${javac}...`);
+    // Simple check for javac in PATH
+    try {
+        console.log(`Compiling Java with javac...`);
 
-        // Use execFileSync to avoid shell quoting issues
-        // Note: We ignore errors here because on this system javac might fail silently
-        try {
-            execFileSync(javac, [
-                '--release', '8',
-                '-d', BIN_DIR,
-                '-cp', path.join(LIB_DIR, 'javaparser-core.jar'),
-                path.join(SRC_DIR, 'ParseJava.java')
-            ], { stdio: 'inherit' });
-        } catch (err) {
-            console.log('Javac execution failed.');
-        }
+        execFileSync('javac', [
+            '--release', '17',
+            '-d', BIN_DIR,
+            '-cp', path.join(LIB_DIR, 'javaparser-core.jar'),
+            path.join(SRC_DIR, 'ParseJava.java')
+        ], { stdio: 'inherit' });
 
         if (fs.existsSync(path.join(BIN_DIR, 'ParseJava.class'))) {
             console.log('Compilation successful.');
             javaAvailable = true;
         } else {
-            console.error('Java Compilation Failed: Output file not created (Environment Issue).');
+            console.error('Java Compilation Failed: Output file not created.');
         }
-    } else {
-        console.error('Java Compilation skipped: JAVA_HOME not set.');
+    } catch (err) {
+        console.log('Javac execution failed:', err.message);
     }
 } catch (e) {
     console.error('Java Setup error:', e.message);
