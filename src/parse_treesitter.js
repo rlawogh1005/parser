@@ -1,44 +1,96 @@
 const Parser = require('tree-sitter');
 const JavaScript = require('tree-sitter-javascript');
-const fs = require('fs').promises; // fs.promises 사용
+const fs = require('fs').promises;
+const path = require('path');
 
-// 1. Parser 인스턴스를 전역(모듈 레벨)에서 한 번만 생성하여 재사용
+// 1. 파서 인스턴스 초기화 (전역 재사용)
 const parser = new Parser();
 parser.setLanguage(JavaScript);
 
 /**
- * 비동기 방식으로 파일을 읽고 파싱 결과를 반환합니다.
+ * Range 변환 헬퍼 함수
+ */
+function mapRange(start, end) {
+    return {
+        start: { line: start.row, col: start.column },
+        end: { line: end.row, col: end.column }
+    };
+}
+
+/**
+ * AST 노드 재귀 탐색 함수
+ */
+function traverseNode(node) {
+    let result = [];
+
+    // 현재 노드의 자식들을 순회
+    for (let i = 0; i < node.namedChildCount; i++) {
+        const child = node.namedChild(i);
+
+        result.push({
+            type: child.type,
+            text: child.text,
+            range: mapRange(child.startPosition, child.endPosition),
+            children: traverseNode(child)
+        });
+    }
+    return result;
+}
+
+/**
+ * [수정됨] 함수 이름을 parseJavascript로 통일
+ * 요청하신 JSON 구조를 반환합니다.
  */
 async function parseJavascript(filePath) {
     try {
-        // 2. 비동기 I/O로 메인 스레드 블로킹 방지
         const code = await fs.readFile(filePath, 'utf8');
-
-        // 이미 생성된 parser 인스턴스 재사용
         const tree = parser.parse(code);
-        return tree.rootNode.toString();
+
+        // AST 순회 및 구조화
+        const astChildren = traverseNode(tree.rootNode);
+
+        // 파일 노드 생성
+        const fileStructure = {
+            type: "file",
+            name: path.basename(filePath),
+            range: mapRange(tree.rootNode.startPosition, tree.rootNode.endPosition),
+            children: astChildren
+        };
+
+        // 디렉토리 노드 생성
+        const dirStructure = {
+            type: "directory",
+            name: path.dirname(filePath),
+            range: mapRange(tree.rootNode.startPosition, tree.rootNode.endPosition),
+            children: [fileStructure]
+        };
+
+        return [dirStructure]; // 배열 반환
+
     } catch (error) {
-        console.error(`Error parsing file: ${filePath}`, error);
-        throw error; // 에러를 호출자에게 전파
+        console.error(`Tree-sitter error processing ${filePath}:`, error);
+        throw error;
     }
 }
 
-// 메인 실행 블록
+// 실행 블록
 if (require.main === module) {
     const filePath = process.argv[2];
     if (filePath) {
         (async () => {
             try {
-                console.log('--- Tree-sitter (JavaScript / Async) ---');
+                // 함수 호출 이름 일치
                 const result = await parseJavascript(filePath);
-                console.log(result);
+                console.log(JSON.stringify(result, null, 4));
             } catch (err) {
+                console.error('Tree-sitter error:', err.message);
                 process.exit(1);
             }
         })();
     } else {
-        console.log('Usage: node script.js <file_path>');
+        console.log('Usage: node tree_sitter_json.js <file_path>');
     }
 }
 
+// 모듈 내보내기 이름 일치
 module.exports = { parseJavascript };

@@ -1,19 +1,17 @@
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseResult;
+import com.github.javaparser.ParserConfiguration;
+import com.github.javaparser.Range;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
-import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
-import com.github.javaparser.ast.body.MethodDeclaration;
-import com.github.javaparser.ast.body.FieldDeclaration;
-import com.github.javaparser.ast.body.VariableDeclarator;
-import com.github.javaparser.ast.expr.NameExpr;
-import com.github.javaparser.ast.expr.StringLiteralExpr;
-import com.github.javaparser.ast.expr.IntegerLiteralExpr;
-import com.github.javaparser.ast.type.ClassOrInterfaceType;
+import com.github.javaparser.ast.body.*;
 
+import java.io.File;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class ParseJava {
@@ -23,75 +21,157 @@ public class ParseJava {
             System.exit(1);
         }
 
-        String filePath = args[0];
+        String inputPath = args[0];
+        Path path = Paths.get(inputPath);
+        File file = path.toFile();
+
+        if (!file.exists()) {
+            System.err.println("File not found: " + inputPath);
+            System.exit(1);
+        }
+
         try {
-            String code = new String(Files.readAllBytes(Paths.get(filePath)));
+            String code = new String(Files.readAllBytes(path));
             
-            com.github.javaparser.ParserConfiguration configuration = new com.github.javaparser.ParserConfiguration();
-            configuration.setLanguageLevel(com.github.javaparser.ParserConfiguration.LanguageLevel.JAVA_17);
+            // 파서 설정
+            ParserConfiguration configuration = new ParserConfiguration();
+            configuration.setLanguageLevel(ParserConfiguration.LanguageLevel.JAVA_17);
             JavaParser javaParser = new JavaParser(configuration);
             
             ParseResult<CompilationUnit> result = javaParser.parse(code);
 
             if (result.isSuccessful() && result.getResult().isPresent()) {
-                System.out.println(nodeToJson(result.getResult().get()));
+                CompilationUnit cu = result.getResult().get();
+                
+                StringBuilder sb = new StringBuilder();
+                sb.append("[\n");
+                
+                // 1. Directory 노드
+                sb.append("    {\n");
+                sb.append("        \"type\": \"directory\",\n");
+                sb.append("        \"name\": \"").append(escape(file.getParent() == null ? "." : file.getParent())).append("\",\n");
+                appendRange(sb, cu.getRange(), 8);
+                sb.append(",\n");
+                sb.append("        \"children\": [\n");
+
+                // 2. File 노드
+                sb.append("            {\n");
+                sb.append("                \"type\": \"file\",\n");
+                sb.append("                \"name\": \"").append(escape(file.getName())).append("\",\n");
+                appendRange(sb, cu.getRange(), 16);
+                sb.append(",\n");
+                sb.append("                \"children\": ");
+                
+                // 3. AST 내부 순회
+                sb.append(processChildren(cu, 20));
+                
+                sb.append("\n            }\n");
+                sb.append("        ]\n");
+                sb.append("    }\n");
+                sb.append("]");
+
+                System.out.println(sb.toString());
+
             } else {
                 System.err.println("Parse error: " + result.getProblems());
                 System.exit(1);
             }
         } catch (Exception e) {
-            System.err.println("Error reading file: " + e.getMessage());
+            System.err.println("Error: " + e.getMessage());
+            e.printStackTrace();
             System.exit(1);
         }
     }
 
-    private static String nodeToJson(Node node) {
+    private static String processChildren(Node node, int indent) {
+        List<Node> targetChildren = node.getChildNodes().stream()
+                .filter(ParseJava::isTargetNode)
+                .collect(Collectors.toList());
+
+        if (targetChildren.isEmpty()) {
+            return "[]";
+        }
+
         StringBuilder sb = new StringBuilder();
-        sb.append("{");
+        sb.append("[\n");
         
-        // Type
-        sb.append("\"type\": \"").append(node.getClass().getSimpleName()).append("\"");
+        String indentStr = " ".repeat(indent);
+        String innerIndent = " ".repeat(indent + 4);
 
-        // Label (Extract useful info for visualization)
-        String label = getLabel(node);
-        if (label != null) {
-            sb.append(", \"label\": \"").append(escape(label)).append("\"");
-        }
-
-        // Children
-        List<Node> children = node.getChildNodes();
-        if (!children.isEmpty()) {
-            sb.append(", \"children\": [");
-            for (int i = 0; i < children.size(); i++) {
-                sb.append(nodeToJson(children.get(i)));
-                if (i < children.size() - 1) {
-                    sb.append(", ");
-                }
+        for (int i = 0; i < targetChildren.size(); i++) {
+            Node child = targetChildren.get(i);
+            sb.append(indentStr).append("{\n");
+            
+            sb.append(innerIndent).append("\"type\": \"").append(getNodeType(child)).append("\",\n");
+            sb.append(innerIndent).append("\"name\": \"").append(escape(getNodeName(child))).append("\",\n");
+            
+            appendRange(sb, child.getRange(), indent + 4);
+            
+            sb.append(",\n").append(innerIndent).append("\"children\": ");
+            sb.append(processChildren(child, indent + 8));
+            
+            sb.append("\n").append(indentStr).append("}");
+            
+            if (i < targetChildren.size() - 1) {
+                sb.append(",\n");
             }
-            sb.append("]");
         }
-
-        sb.append("}");
+        sb.append("\n").append(" ".repeat(indent - 4)).append("]");
         return sb.toString();
     }
 
-    private static String getLabel(Node node) {
-        if (node instanceof com.github.javaparser.ast.body.TypeDeclaration) {
-             return ((com.github.javaparser.ast.body.TypeDeclaration<?>) node).getNameAsString();
-        } else if (node instanceof MethodDeclaration) {
-            return ((MethodDeclaration) node).getNameAsString();
-        } else if (node instanceof VariableDeclarator) {
-            return ((VariableDeclarator) node).getNameAsString();
-        } else if (node instanceof NameExpr) {
-            return ((NameExpr) node).getNameAsString();
-        } else if (node instanceof StringLiteralExpr) {
-            return ((StringLiteralExpr) node).getValue();
-        } else if (node instanceof IntegerLiteralExpr) {
-            return ((IntegerLiteralExpr) node).getValue();
-        } else if (node instanceof ClassOrInterfaceType) {
-            return ((ClassOrInterfaceType) node).getNameAsString();
+    private static void appendRange(StringBuilder sb, Optional<Range> rangeOpt, int indent) {
+        String indentStr = " ".repeat(indent);
+        String innerIndent = " ".repeat(indent + 4);
+        
+        sb.append(indentStr).append("\"range\": {\n");
+        if (rangeOpt.isPresent()) {
+            Range r = rangeOpt.get();
+            sb.append(innerIndent).append("\"start\": {\n");
+            sb.append(innerIndent).append("    \"line\": ").append(r.begin.line).append(",\n");
+            sb.append(innerIndent).append("    \"col\": ").append(r.begin.column).append("\n");
+            sb.append(innerIndent).append("},\n");
+            sb.append(innerIndent).append("\"end\": {\n");
+            sb.append(innerIndent).append("    \"line\": ").append(r.end.line).append(",\n");
+            sb.append(innerIndent).append("    \"col\": ").append(r.end.column).append("\n");
+            sb.append(innerIndent).append("}\n");
+        } else {
+            sb.append(innerIndent).append("\"start\": { \"line\": 0, \"col\": 0 },\n");
+            sb.append(innerIndent).append("\"end\": { \"line\": 0, \"col\": 0 }\n");
         }
-        return null;
+        sb.append(indentStr).append("}");
+    }
+
+    private static boolean isTargetNode(Node node) {
+        return node instanceof TypeDeclaration || 
+               node instanceof MethodDeclaration || 
+               node instanceof ConstructorDeclaration;
+    }
+
+    // [수정됨] Switch Pattern Matching -> if-else instanceof 변경
+    private static String getNodeType(Node node) {
+        if (node instanceof ClassOrInterfaceDeclaration) {
+            return ((ClassOrInterfaceDeclaration) node).isInterface() ? "interface" : "class";
+        }
+        if (node instanceof EnumDeclaration) return "enum";
+        if (node instanceof RecordDeclaration) return "record";
+        if (node instanceof MethodDeclaration) return "method";
+        if (node instanceof ConstructorDeclaration) return "constructor";
+        return "unknown";
+    }
+
+    // [수정됨] Switch Pattern Matching -> if-else instanceof 변경
+    private static String getNodeName(Node node) {
+        if (node instanceof TypeDeclaration) {
+            return ((TypeDeclaration<?>) node).getNameAsString();
+        }
+        if (node instanceof MethodDeclaration) {
+            return ((MethodDeclaration) node).getNameAsString();
+        }
+        if (node instanceof ConstructorDeclaration) {
+            return ((ConstructorDeclaration) node).getNameAsString();
+        }
+        return "-";
     }
 
     private static String escape(String s) {
@@ -99,4 +179,3 @@ public class ParseJava {
         return s.replace("\\", "\\\\").replace("\"", "\\\"");
     }
 }
-
