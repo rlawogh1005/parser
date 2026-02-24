@@ -1,0 +1,80 @@
+[
+    {
+        "type": "directory",
+        "name": "/home/jaeho/workspace/parser/samples",
+        "range": {
+            "start": {
+                "line": 1,
+                "col": 1
+            },
+            "end": {
+                "line": 11,
+                "col": 2
+            }
+        },
+        "children": [
+            {
+                "type": "file",
+                "name": "sample.java",
+                "range": {
+                    "start": {
+                        "line": 1,
+                        "col": 1
+                    },
+                    "end": {
+                        "line": 11,
+                        "col": 2
+                    }
+                },
+                "children": [
+                    {
+                        "type": "class",
+                        "name": "Sample",
+                        "range": {
+                            "start": {
+                                "line": 1,
+                                "col": 1
+                            },
+                            "end": {
+                                "line": 11,
+                                "col": 1
+                            }
+                        },
+                        "children": [
+                            {
+                                "type": "constructor",
+                                "name": "Sample",
+                                "range": {
+                                    "start": {
+                                        "line": 4,
+                                        "col": 5
+                                    },
+                                    "end": {
+                                        "line": 6,
+                                        "col": 5
+                                    }
+                                },
+                                "children": []
+                            },
+                            {
+                                "type": "method",
+                                "name": "printMessage",
+                                "range": {
+                                    "start": {
+                                        "line": 8,
+                                        "col": 5
+                                    },
+                                    "end": {
+                                        "line": 10,
+                                        "col": 5
+                                    }
+                                },
+                                "children": []
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+]

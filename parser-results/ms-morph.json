@@ -1,0 +1,346 @@
+{
+  "kind": "SourceFile",
+  "text": "interface User {\n    id: number;\n    username: string;\n    email?: string;\n}\n\nclass UserManager {\n    private users: User[] = [];\n\n    addUser(user: User): void {\n        this.users.push(user);\n    }\n}",
+  "range": {
+    "start": 26,
+    "end": 228
+  },
+  "children": [
+    {
+      "kind": "InterfaceDeclaration",
+      "text": "interface User {\n    id: number;\n    username: string;\n    email?: string;\n}",
+      "range": {
+        "start": 26,
+        "end": 102
+      },
+      "children": [
+        {
+          "kind": "Identifier",
+          "text": "User",
+          "range": {
+            "start": 36,
+            "end": 40
+          }
+        },
+        {
+          "kind": "PropertySignature",
+          "text": "id: number;",
+          "range": {
+            "start": 47,
+            "end": 58
+          },
+          "children": [
+            {
+              "kind": "Identifier",
+              "text": "id",
+              "range": {
+                "start": 47,
+                "end": 49
+              }
+            },
+            {
+              "kind": "NumberKeyword",
+              "text": "number",
+              "range": {
+                "start": 51,
+                "end": 57
+              }
+            }
+          ]
+        },
+        {
+          "kind": "PropertySignature",
+          "text": "username: string;",
+          "range": {
+            "start": 63,
+            "end": 80
+          },
+          "children": [
+            {
+              "kind": "Identifier",
+              "text": "username",
+              "range": {
+                "start": 63,
+                "end": 71
+              }
+            },
+            {
+              "kind": "StringKeyword",
+              "text": "string",
+              "range": {
+                "start": 73,
+                "end": 79
+              }
+            }
+          ]
+        },
+        {
+          "kind": "PropertySignature",
+          "text": "email?: string;",
+          "range": {
+            "start": 85,
+            "end": 100
+          },
+          "children": [
+            {
+              "kind": "Identifier",
+              "text": "email",
+              "range": {
+                "start": 85,
+                "end": 90
+              }
+            },
+            {
+              "kind": "QuestionToken",
+              "text": "?",
+              "range": {
+                "start": 90,
+                "end": 91
+              }
+            },
+            {
+              "kind": "StringKeyword",
+              "text": "string",
+              "range": {
+                "start": 93,
+                "end": 99
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "ClassDeclaration",
+      "text": "class UserManager {\n    private users: User[] = [];\n\n    addUser(user: User): void {\n        this.users.push(user);\n    }\n}",
+      "range": {
+        "start": 104,
+        "end": 227
+      },
+      "children": [
+        {
+          "kind": "Identifier",
+          "text": "UserManager",
+          "range": {
+            "start": 110,
+            "end": 121
+          }
+        },
+        {
+          "kind": "PropertyDeclaration",
+          "text": "private users: User[] = [];",
+          "range": {
+            "start": 128,
+            "end": 155
+          },
+          "children": [
+            {
+              "kind": "PrivateKeyword",
+              "text": "private",
+              "range": {
+                "start": 128,
+                "end": 135
+              }
+            },
+            {
+              "kind": "Identifier",
+              "text": "users",
+              "range": {
+                "start": 136,
+                "end": 141
+              }
+            },
+            {
+              "kind": "ArrayType",
+              "text": "User[]",
+              "range": {
+                "start": 143,
+                "end": 149
+              },
+              "children": [
+                {
+                  "kind": "TypeReference",
+                  "text": "User",
+                  "range": {
+                    "start": 143,
+                    "end": 147
+                  },
+                  "children": [
+                    {
+                      "kind": "Identifier",
+                      "text": "User",
+                      "range": {
+                        "start": 143,
+                        "end": 147
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "ArrayLiteralExpression",
+              "text": "[]",
+              "range": {
+                "start": 152,
+                "end": 154
+              }
+            }
+          ]
+        },
+        {
+          "kind": "MethodDeclaration",
+          "text": "addUser(user: User): void {\n        this.users.push(user);\n    }",
+          "range": {
+            "start": 161,
+            "end": 225
+          },
+          "children": [
+            {
+              "kind": "Identifier",
+              "text": "addUser",
+              "range": {
+                "start": 161,
+                "end": 168
+              }
+            },
+            {
+              "kind": "Parameter",
+              "text": "user: User",
+              "range": {
+                "start": 169,
+                "end": 179
+              },
+              "children": [
+                {
+                  "kind": "Identifier",
+                  "text": "user",
+                  "range": {
+                    "start": 169,
+                    "end": 173
+                  }
+                },
+                {
+                  "kind": "TypeReference",
+                  "text": "User",
+                  "range": {
+                    "start": 175,
+                    "end": 179
+                  },
+                  "children": [
+                    {
+                      "kind": "Identifier",
+                      "text": "User",
+                      "range": {
+                        "start": 175,
+                        "end": 179
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "VoidKeyword",
+              "text": "void",
+              "range": {
+                "start": 182,
+                "end": 186
+              }
+            },
+            {
+              "kind": "Block",
+              "text": "{\n        this.users.push(user);\n    }",
+              "range": {
+                "start": 187,
+                "end": 225
+              },
+              "children": [
+                {
+                  "kind": "ExpressionStatement",
+                  "text": "this.users.push(user);",
+                  "range": {
+                    "start": 197,
+                    "end": 219
+                  },
+                  "children": [
+                    {
+                      "kind": "CallExpression",
+                      "text": "this.users.push(user)",
+                      "range": {
+                        "start": 197,
+                        "end": 218
+                      },
+                      "children": [
+                        {
+                          "kind": "PropertyAccessExpression",
+                          "text": "this.users.push",
+                          "range": {
+                            "start": 197,
+                            "end": 212
+                          },
+                          "children": [
+                            {
+                              "kind": "PropertyAccessExpression",
+                              "text": "this.users",
+                              "range": {
+                                "start": 197,
+                                "end": 207
+                              },
+                              "children": [
+                                {
+                                  "kind": "ThisKeyword",
+                                  "text": "this",
+                                  "range": {
+                                    "start": 197,
+                                    "end": 201
+                                  }
+                                },
+                                {
+                                  "kind": "Identifier",
+                                  "text": "users",
+                                  "range": {
+                                    "start": 202,
+                                    "end": 207
+                                  }
+                                }
+                              ]
+                            },
+                            {
+                              "kind": "Identifier",
+                              "text": "push",
+                              "range": {
+                                "start": 208,
+                                "end": 212
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "kind": "Identifier",
+                          "text": "user",
+                          "range": {
+                            "start": 213,
+                            "end": 217
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "EndOfFileToken",
+      "text": "",
+      "range": {
+        "start": 228,
+        "end": 228
+      }
+    }
+  ]
+}
