@@ -4,8 +4,9 @@ output/
 temp.*
 Temp.*
 *.class
-server.log
+*.log
 .DS_Store
 
 # Allow payloads
 !payload_*.json
+!parser-results_*.json
