@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  mp-parser:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mp-parser
+    ports:
+      - "3001:3001"
+    volumes:
+      # [중요] 분석할 실제 소스 코드 경로를 /code에 마운트합니다.
+      # Jenkins 파이프라인 실행 시에는 WORKSPACE 경로로 대체될 수 있습니다.
+      - ./samples:/code:ro
+    environment:
+      - BACKEND_URL=http://codevi-backend:13000/ast-data
+      - TARGET_DIR=/code
+      - PORT=3001
+    networks:
+      - shared-net
+    restart: always
+
+networks:
+  shared-net:
+    # 기존에 생성된 네트워크를 사용하거나 새로 정의합니다.
+    external: true
