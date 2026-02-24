@@ -1,99 +1,195 @@
-const { execSync, execFileSync } = require('child_process');
-const path = require('path');
+const express = require('express');
+const bodyParser = require('body-parser');
+const multer = require('multer');
+const AdmZip = require('adm-zip');
 const fs = require('fs');
-const { parseJavascript } = require('./src/parse_treesitter');
-const { parseTypescript } = require('./src/parse_tsmorph');
+const path = require('path');
+const Parser = require('tree-sitter');
 
-const BIN_DIR = path.join(__dirname, 'bin');
-const SRC_DIR = path.join(__dirname, 'src');
-const LIB_DIR = path.join(__dirname, 'lib');
-const JAVA_CP = `${path.join(LIB_DIR, 'javaparser-core.jar')}${path.delimiter}${BIN_DIR}`;
+const parser = new Parser();
 
-// Compile Java
-let javaAvailable = false;
-try {
-    if (!fs.existsSync(BIN_DIR)) fs.mkdirSync(BIN_DIR);
+// 언어별 Tree-sitter 모듈 로드
+const languages = {
+    '.java': require('tree-sitter-java'),
+    '.py': require('tree-sitter-python'),
+    '.ts': require('tree-sitter-typescript').typescript,
+    '.js': require('tree-sitter-javascript'),
+    '.cpp': require('tree-sitter-cpp'),
+    '.h': require('tree-sitter-cpp')
+};
 
-    // Simple check for javac in PATH
-    try {
-        console.log(`Compiling Java with javac...`);
+const app = express();
+const upload = multer({ dest: 'uploads/' });
+const PORT = process.env.PORT || 3001;
 
-        execFileSync('javac', [
-            '--release', '17',
-            '-d', BIN_DIR,
-            '-cp', path.join(LIB_DIR, 'javaparser-core.jar'),
-            path.join(SRC_DIR, 'ParseJava.java')
-        ], { stdio: 'inherit' });
+app.use(bodyParser.json({ limit: '100mb' }));
 
-        if (fs.existsSync(path.join(BIN_DIR, 'ParseJava.class'))) {
-            console.log('Compilation successful.');
-            javaAvailable = true;
-        } else {
-            console.error('Java Compilation Failed: Output file not created.');
+// 4계층 추출을 위한 노드 타입 정의 (Standardization)
+const TARGET_NODE_TYPES = {
+    // Common
+    class_declaration: 'CLASS',
+    class_definition: 'CLASS',
+    class_specifier: 'CLASS',
+    method_declaration: 'METHOD',
+    method_definition: 'METHOD',
+    function_definition: 'METHOD',
+    function_declaration: 'METHOD',
+    interface_declaration: 'INTERFACE'
+};
+
+/**
+ * Tree-sitter 노드에서 이름(identifier) 추출
+ */
+function getIdentifier(node) {
+    const nameNode = node.childForFieldName('name');
+    if (nameNode) return nameNode.text;
+    for (let i = 0; i < node.childCount; i++) {
+        const child = node.child(i);
+        if (child.type === 'identifier' || child.type === 'type_identifier') {
+            return child.text;
         }
-    } catch (err) {
-        console.log('Javac execution failed:', err.message);
     }
-} catch (e) {
-    console.error('Java Setup error:', e.message);
+    return "anonymous";
 }
 
-// Define sample file paths
-const SAMPLE_DIR = path.join(__dirname, 'samples');
-const JS_SAMPLE = path.join(SAMPLE_DIR, 'sample.js');
-const TS_SAMPLE = path.join(SAMPLE_DIR, 'sample.ts');
-const PY_SAMPLE = path.join(SAMPLE_DIR, 'sample.py');
-const JAVA_SAMPLE = path.join(SAMPLE_DIR, 'sample.java');
+/**
+ * 재귀적으로 AST 구조 추출 (Standardized Format)
+ */
+function extractStructure(node) {
+    const children = [];
+    const mappedType = TARGET_NODE_TYPES[node.type];
 
-console.log('=== Parser Demonstration (File Based) ===\n');
-
-// 1. Tree-sitter
-try {
-    console.log(`--- Tree-sitter (JavaScript) ---`);
-    console.log(`File: ${JS_SAMPLE}`);
-    console.log(parseJavascript(JS_SAMPLE));
-} catch (e) {
-    console.error('Tree-sitter error:', e.message);
-}
-
-console.log('\n');
-
-// 2. ts-morph
-try {
-    console.log(`--- ts-morph (TypeScript) ---`);
-    console.log(`File: ${TS_SAMPLE}`);
-    console.log(parseTypescript(TS_SAMPLE));
-} catch (e) {
-    console.error('ts-morph error:', e.message);
-}
-
-console.log('\n');
-
-// 3. Python ast
-// 3. Python ast
-try {
-    console.log(`--- Python ast ---`);
-    console.log(`File: ${PY_SAMPLE}`);
-    const output = execSync(`python src/parse_python.py "${PY_SAMPLE}"`, { cwd: __dirname }).toString();
-    console.log(output.trim());
-} catch (e) {
-    console.error('Python error:', e.message);
-}
-
-console.log('\n');
-
-// 4. JavaParser
-try {
-    if (javaAvailable) {
-        console.log(`File: ${JAVA_SAMPLE}`);
-        // Java argument is file path now
-        const cmd = `java -cp "${JAVA_CP}" ParseJava "${JAVA_SAMPLE}"`;
-        const output = execSync(cmd, { cwd: __dirname }).toString();
-        console.log(output.trim());
-    } else {
-        console.log('--- JavaParser ---');
-        console.log('Skipping JavaParser demo due to compilation failure.');
+    // 자식 노드 순회
+    for (let i = 0; i < node.childCount; i++) {
+        children.push(...extractStructure(node.child(i)));
     }
-} catch (e) {
-    console.error('JavaParser error:', e.message);
+
+    if (mappedType) {
+        return [{
+            type: mappedType,
+            name: getIdentifier(node),
+            range: {
+                start: { line: node.startPosition.row + 1, col: node.startPosition.column },
+                end: { line: node.endPosition.row + 1, col: node.endPosition.column }
+            },
+            children: children
+        }];
+    }
+    return children;
 }
+
+
+/**
+ * AST 데이터 추출
+ */
+function traverseAndExtract(node, targetArray) {
+    const mappedType = TARGET_NODE_TYPES[node.type];
+    let nextChildren = targetArray; // 기본적으로 현재 레벨의 배열을 가리킴
+
+    if (mappedType) {
+        const item = {
+            type: mappedType,
+            name: getIdentifier(node),
+            range: {
+                start: { line: node.startPosition.row + 1, col: node.startPosition.column },
+                end: { line: node.endPosition.row + 1, col: node.endPosition.column }
+            },
+            children: []
+        };
+        targetArray.push(item);
+        nextChildren = item.children; // 매핑된 노드라면 하위 노드는 이 item의 자식으로 들어감
+    }
+
+    // 자식 노드 순회
+    for (let i = 0; i < node.childCount; i++) {
+        traverseAndExtract(node.child(i), nextChildren);
+    }
+}
+
+/**
+ * 디렉토리/파일 순회 및 분석
+ */
+function processDirectory(currentPath) {
+    try {
+        const stats = fs.statSync(currentPath);
+        const name = path.basename(currentPath);
+
+        if (stats.isDirectory()) {
+            const files = fs.readdirSync(currentPath);
+            const children = files
+                .filter(f => !['node_modules', '.git', 'dist', '__pycache__'].includes(f))
+                .map(f => processDirectory(path.join(currentPath, f)))
+                .filter(Boolean);
+
+            return { type: 'DIRECTORY', name: currentPath, children };
+        } else {
+            const ext = path.extname(currentPath);
+            const language = languages[ext];
+            if (!language) return null;
+
+            const code = fs.readFileSync(currentPath, 'utf8');
+
+
+            try {
+                parser.setLanguage(language);
+                const tree = parser.parse(code);
+                const structureChildren = [];
+                if (tree.rootNode) {
+                    traverseAndExtract(tree.rootNode, structureChildren);
+                }
+                return { type: 'FILE', name, children: structureChildren };
+            } catch (astErr) {
+                console.error(`[AST Error] File: ${currentPath}, Size: ${code.length}, Error: ${astErr.message}`);
+                // 파싱 실패 시 빈 결과 반환하되 전체 프로세스는 계속 진행
+                return { type: 'FILE', name, children: [], error: astErr.message };
+            }
+        }
+    } catch (e) {
+        console.error(`[FS Error] Path: ${currentPath}, Error: ${e.message}`);
+        return null;
+    }
+}
+
+// --- API Endpoints ---
+
+app.post('/analyze', upload.single('file'), async (req, res) => {
+    console.log(`[Parser] Received analyze request...`);
+
+    if (!req.file) {
+        return res.status(400).json({ error: "No file uploaded." });
+    }
+
+    const extractPath = path.join(__dirname, 'temp_' + Date.now() + '_' + Math.random().toString(36).substring(7));
+
+    try {
+        // 1. 압축 해제
+        const zip = new AdmZip(req.file.path);
+        zip.extractAllTo(extractPath, true);
+
+        // 2. 분석
+        const rootNode = processDirectory(extractPath);
+
+        // 3. 청소
+        if (fs.existsSync(extractPath)) {
+            fs.rmSync(extractPath, { recursive: true, force: true });
+        }
+        if (fs.existsSync(req.file.path)) {
+            fs.unlinkSync(req.file.path);
+        }
+
+        return res.json({
+            nodes: rootNode ? [rootNode] : [],
+            timestamp: new Date().toISOString()
+        });
+    } catch (e) {
+        console.error('[Critical Error]', e.stack);
+        // 에러 발생 시에도 청소 시도
+        try { if (fs.existsSync(extractPath)) fs.rmSync(extractPath, { recursive: true, force: true }); } catch (rmErr) { }
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// Health check
+app.get('/health', (req, res) => res.send('OK'));
+
+app.listen(PORT, () => console.log(`Parser ready on port ${PORT}`));
