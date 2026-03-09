@@ -2,7 +2,7 @@ const { execSync } = require('child_process');
 const path = require('path');
 const fs = require('fs');
 
-const { parseJavascript } = require('./src/parse_treesitter');
+const { parseJavascript } = require('../src/parse_treesitter');
 
 // 경로 설정
 const RESULTS_DIR = path.join(__dirname, 'parser-results');
