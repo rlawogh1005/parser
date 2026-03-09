@@ -1,15 +1,18 @@
-class Task {
-    constructor(id, title) {
-        this.id = id;
-        this.title = title;
-        this.isCompleted = false;
+class Rectangle {
+    constructor(width, height) {
+        this.width = width;
+        this.height = height;
     }
 
-    complete() {
-        this.isCompleted = true;
-        console.log("Task completed: " + this.title);
+    getArea() {
+        return this.width * this.height;
+    }
+
+    getPerimeter() {
+        return 2 * (this.width + this.height);
     }
 }
 
-const myTask = new Task(1, "Visualization");
-myTask.complete();
+const rect = new Rectangle(5, 10);
+console.log(`Area: ${rect.getArea()}`);
+console.log(`Perimeter: ${rect.getPerimeter()}`);

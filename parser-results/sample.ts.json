@@ -1,0 +1,716 @@
+{
+  "kind": "SourceFile",
+  "text": "class Rectangle {\n    constructor(public width: number, public height: number) { }\n\n    getArea(): number {\n        return this.width * this.height;\n    }\n\n    getPerimeter(): number {\n        return 2 * (this.width + this.height);\n    }\n}\n\nconst rect = new Rectangle(5, 10);\nconsole.log(`Area: ${rect.getArea()}`);\nconsole.log(`Perimeter: ${rect.getPerimeter()}`);\n\nexport { }",
+  "range": {
+    "start": 0,
+    "end": 377
+  },
+  "children": [
+    {
+      "kind": "ClassDeclaration",
+      "text": "class Rectangle {\n    constructor(public width: number, public height: number) { }\n\n    getArea(): number {\n        return this.width * this.height;\n    }\n\n    getPerimeter(): number {\n        return 2 * (this.width + this.height);\n    }\n}",
+      "range": {
+        "start": 0,
+        "end": 239
+      },
+      "children": [
+        {
+          "kind": "Identifier",
+          "text": "Rectangle",
+          "range": {
+            "start": 6,
+            "end": 15
+          }
+        },
+        {
+          "kind": "Constructor",
+          "text": "constructor(public width: number, public height: number) { }",
+          "range": {
+            "start": 22,
+            "end": 82
+          },
+          "children": [
+            {
+              "kind": "Parameter",
+              "text": "public width: number",
+              "range": {
+                "start": 34,
+                "end": 54
+              },
+              "children": [
+                {
+                  "kind": "PublicKeyword",
+                  "text": "public",
+                  "range": {
+                    "start": 34,
+                    "end": 40
+                  }
+                },
+                {
+                  "kind": "Identifier",
+                  "text": "width",
+                  "range": {
+                    "start": 41,
+                    "end": 46
+                  }
+                },
+                {
+                  "kind": "NumberKeyword",
+                  "text": "number",
+                  "range": {
+                    "start": 48,
+                    "end": 54
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "Parameter",
+              "text": "public height: number",
+              "range": {
+                "start": 56,
+                "end": 77
+              },
+              "children": [
+                {
+                  "kind": "PublicKeyword",
+                  "text": "public",
+                  "range": {
+                    "start": 56,
+                    "end": 62
+                  }
+                },
+                {
+                  "kind": "Identifier",
+                  "text": "height",
+                  "range": {
+                    "start": 63,
+                    "end": 69
+                  }
+                },
+                {
+                  "kind": "NumberKeyword",
+                  "text": "number",
+                  "range": {
+                    "start": 71,
+                    "end": 77
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "Block",
+              "text": "{ }",
+              "range": {
+                "start": 79,
+                "end": 82
+              }
+            }
+          ]
+        },
+        {
+          "kind": "MethodDeclaration",
+          "text": "getArea(): number {\n        return this.width * this.height;\n    }",
+          "range": {
+            "start": 88,
+            "end": 154
+          },
+          "children": [
+            {
+              "kind": "Identifier",
+              "text": "getArea",
+              "range": {
+                "start": 88,
+                "end": 95
+              }
+            },
+            {
+              "kind": "NumberKeyword",
+              "text": "number",
+              "range": {
+                "start": 99,
+                "end": 105
+              }
+            },
+            {
+              "kind": "Block",
+              "text": "{\n        return this.width * this.height;\n    }",
+              "range": {
+                "start": 106,
+                "end": 154
+              },
+              "children": [
+                {
+                  "kind": "ReturnStatement",
+                  "text": "return this.width * this.height;",
+                  "range": {
+                    "start": 116,
+                    "end": 148
+                  },
+                  "children": [
+                    {
+                      "kind": "BinaryExpression",
+                      "text": "this.width * this.height",
+                      "range": {
+                        "start": 123,
+                        "end": 147
+                      },
+                      "children": [
+                        {
+                          "kind": "PropertyAccessExpression",
+                          "text": "this.width",
+                          "range": {
+                            "start": 123,
+                            "end": 133
+                          },
+                          "children": [
+                            {
+                              "kind": "ThisKeyword",
+                              "text": "this",
+                              "range": {
+                                "start": 123,
+                                "end": 127
+                              }
+                            },
+                            {
+                              "kind": "Identifier",
+                              "text": "width",
+                              "range": {
+                                "start": 128,
+                                "end": 133
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "kind": "AsteriskToken",
+                          "text": "*",
+                          "range": {
+                            "start": 134,
+                            "end": 135
+                          }
+                        },
+                        {
+                          "kind": "PropertyAccessExpression",
+                          "text": "this.height",
+                          "range": {
+                            "start": 136,
+                            "end": 147
+                          },
+                          "children": [
+                            {
+                              "kind": "ThisKeyword",
+                              "text": "this",
+                              "range": {
+                                "start": 136,
+                                "end": 140
+                              }
+                            },
+                            {
+                              "kind": "Identifier",
+                              "text": "height",
+                              "range": {
+                                "start": 141,
+                                "end": 147
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "MethodDeclaration",
+          "text": "getPerimeter(): number {\n        return 2 * (this.width + this.height);\n    }",
+          "range": {
+            "start": 160,
+            "end": 237
+          },
+          "children": [
+            {
+              "kind": "Identifier",
+              "text": "getPerimeter",
+              "range": {
+                "start": 160,
+                "end": 172
+              }
+            },
+            {
+              "kind": "NumberKeyword",
+              "text": "number",
+              "range": {
+                "start": 176,
+                "end": 182
+              }
+            },
+            {
+              "kind": "Block",
+              "text": "{\n        return 2 * (this.width + this.height);\n    }",
+              "range": {
+                "start": 183,
+                "end": 237
+              },
+              "children": [
+                {
+                  "kind": "ReturnStatement",
+                  "text": "return 2 * (this.width + this.height);",
+                  "range": {
+                    "start": 193,
+                    "end": 231
+                  },
+                  "children": [
+                    {
+                      "kind": "BinaryExpression",
+                      "text": "2 * (this.width + this.height)",
+                      "range": {
+                        "start": 200,
+                        "end": 230
+                      },
+                      "children": [
+                        {
+                          "kind": "FirstLiteralToken",
+                          "text": "2",
+                          "range": {
+                            "start": 200,
+                            "end": 201
+                          }
+                        },
+                        {
+                          "kind": "AsteriskToken",
+                          "text": "*",
+                          "range": {
+                            "start": 202,
+                            "end": 203
+                          }
+                        },
+                        {
+                          "kind": "ParenthesizedExpression",
+                          "text": "(this.width + this.height)",
+                          "range": {
+                            "start": 204,
+                            "end": 230
+                          },
+                          "children": [
+                            {
+                              "kind": "BinaryExpression",
+                              "text": "this.width + this.height",
+                              "range": {
+                                "start": 205,
+                                "end": 229
+                              },
+                              "children": [
+                                {
+                                  "kind": "PropertyAccessExpression",
+                                  "text": "this.width",
+                                  "range": {
+                                    "start": 205,
+                                    "end": 215
+                                  },
+                                  "children": [
+                                    {
+                                      "kind": "ThisKeyword",
+                                      "text": "this",
+                                      "range": {
+                                        "start": 205,
+                                        "end": 209
+                                      }
+                                    },
+                                    {
+                                      "kind": "Identifier",
+                                      "text": "width",
+                                      "range": {
+                                        "start": 210,
+                                        "end": 215
+                                      }
+                                    }
+                                  ]
+                                },
+                                {
+                                  "kind": "PlusToken",
+                                  "text": "+",
+                                  "range": {
+                                    "start": 216,
+                                    "end": 217
+                                  }
+                                },
+                                {
+                                  "kind": "PropertyAccessExpression",
+                                  "text": "this.height",
+                                  "range": {
+                                    "start": 218,
+                                    "end": 229
+                                  },
+                                  "children": [
+                                    {
+                                      "kind": "ThisKeyword",
+                                      "text": "this",
+                                      "range": {
+                                        "start": 218,
+                                        "end": 222
+                                      }
+                                    },
+                                    {
+                                      "kind": "Identifier",
+                                      "text": "height",
+                                      "range": {
+                                        "start": 223,
+                                        "end": 229
+                                      }
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "FirstStatement",
+      "text": "const rect = new Rectangle(5, 10);",
+      "range": {
+        "start": 241,
+        "end": 275
+      },
+      "children": [
+        {
+          "kind": "VariableDeclarationList",
+          "text": "const rect = new Rectangle(5, 10)",
+          "range": {
+            "start": 241,
+            "end": 274
+          },
+          "children": [
+            {
+              "kind": "VariableDeclaration",
+              "text": "rect = new Rectangle(5, 10)",
+              "range": {
+                "start": 247,
+                "end": 274
+              },
+              "children": [
+                {
+                  "kind": "Identifier",
+                  "text": "rect",
+                  "range": {
+                    "start": 247,
+                    "end": 251
+                  }
+                },
+                {
+                  "kind": "NewExpression",
+                  "text": "new Rectangle(5, 10)",
+                  "range": {
+                    "start": 254,
+                    "end": 274
+                  },
+                  "children": [
+                    {
+                      "kind": "Identifier",
+                      "text": "Rectangle",
+                      "range": {
+                        "start": 258,
+                        "end": 267
+                      }
+                    },
+                    {
+                      "kind": "FirstLiteralToken",
+                      "text": "5",
+                      "range": {
+                        "start": 268,
+                        "end": 269
+                      }
+                    },
+                    {
+                      "kind": "FirstLiteralToken",
+                      "text": "10",
+                      "range": {
+                        "start": 271,
+                        "end": 273
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "ExpressionStatement",
+      "text": "console.log(`Area: ${rect.getArea()}`);",
+      "range": {
+        "start": 276,
+        "end": 315
+      },
+      "children": [
+        {
+          "kind": "CallExpression",
+          "text": "console.log(`Area: ${rect.getArea()}`)",
+          "range": {
+            "start": 276,
+            "end": 314
+          },
+          "children": [
+            {
+              "kind": "PropertyAccessExpression",
+              "text": "console.log",
+              "range": {
+                "start": 276,
+                "end": 287
+              },
+              "children": [
+                {
+                  "kind": "Identifier",
+                  "text": "console",
+                  "range": {
+                    "start": 276,
+                    "end": 283
+                  }
+                },
+                {
+                  "kind": "Identifier",
+                  "text": "log",
+                  "range": {
+                    "start": 284,
+                    "end": 287
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "TemplateExpression",
+              "text": "`Area: ${rect.getArea()}`",
+              "range": {
+                "start": 288,
+                "end": 313
+              },
+              "children": [
+                {
+                  "kind": "TemplateHead",
+                  "text": "`Area: ${",
+                  "range": {
+                    "start": 288,
+                    "end": 297
+                  }
+                },
+                {
+                  "kind": "TemplateSpan",
+                  "text": "rect.getArea()}`",
+                  "range": {
+                    "start": 297,
+                    "end": 313
+                  },
+                  "children": [
+                    {
+                      "kind": "CallExpression",
+                      "text": "rect.getArea()",
+                      "range": {
+                        "start": 297,
+                        "end": 311
+                      },
+                      "children": [
+                        {
+                          "kind": "PropertyAccessExpression",
+                          "text": "rect.getArea",
+                          "range": {
+                            "start": 297,
+                            "end": 309
+                          },
+                          "children": [
+                            {
+                              "kind": "Identifier",
+                              "text": "rect",
+                              "range": {
+                                "start": 297,
+                                "end": 301
+                              }
+                            },
+                            {
+                              "kind": "Identifier",
+                              "text": "getArea",
+                              "range": {
+                                "start": 302,
+                                "end": 309
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "kind": "LastTemplateToken",
+                      "text": "}`",
+                      "range": {
+                        "start": 311,
+                        "end": 313
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "ExpressionStatement",
+      "text": "console.log(`Perimeter: ${rect.getPerimeter()}`);",
+      "range": {
+        "start": 316,
+        "end": 365
+      },
+      "children": [
+        {
+          "kind": "CallExpression",
+          "text": "console.log(`Perimeter: ${rect.getPerimeter()}`)",
+          "range": {
+            "start": 316,
+            "end": 364
+          },
+          "children": [
+            {
+              "kind": "PropertyAccessExpression",
+              "text": "console.log",
+              "range": {
+                "start": 316,
+                "end": 327
+              },
+              "children": [
+                {
+                  "kind": "Identifier",
+                  "text": "console",
+                  "range": {
+                    "start": 316,
+                    "end": 323
+                  }
+                },
+                {
+                  "kind": "Identifier",
+                  "text": "log",
+                  "range": {
+                    "start": 324,
+                    "end": 327
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "TemplateExpression",
+              "text": "`Perimeter: ${rect.getPerimeter()}`",
+              "range": {
+                "start": 328,
+                "end": 363
+              },
+              "children": [
+                {
+                  "kind": "TemplateHead",
+                  "text": "`Perimeter: ${",
+                  "range": {
+                    "start": 328,
+                    "end": 342
+                  }
+                },
+                {
+                  "kind": "TemplateSpan",
+                  "text": "rect.getPerimeter()}`",
+                  "range": {
+                    "start": 342,
+                    "end": 363
+                  },
+                  "children": [
+                    {
+                      "kind": "CallExpression",
+                      "text": "rect.getPerimeter()",
+                      "range": {
+                        "start": 342,
+                        "end": 361
+                      },
+                      "children": [
+                        {
+                          "kind": "PropertyAccessExpression",
+                          "text": "rect.getPerimeter",
+                          "range": {
+                            "start": 342,
+                            "end": 359
+                          },
+                          "children": [
+                            {
+                              "kind": "Identifier",
+                              "text": "rect",
+                              "range": {
+                                "start": 342,
+                                "end": 346
+                              }
+                            },
+                            {
+                              "kind": "Identifier",
+                              "text": "getPerimeter",
+                              "range": {
+                                "start": 347,
+                                "end": 359
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "kind": "LastTemplateToken",
+                      "text": "}`",
+                      "range": {
+                        "start": 361,
+                        "end": 363
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "ExportDeclaration",
+      "text": "export { }",
+      "range": {
+        "start": 367,
+        "end": 377
+      },
+      "children": [
+        {
+          "kind": "NamedExports",
+          "text": "{ }",
+          "range": {
+            "start": 374,
+            "end": 377
+          }
+        }
+      ]
+    },
+    {
+      "kind": "EndOfFileToken",
+      "text": "",
+      "range": {
+        "start": 377,
+        "end": 377
+      }
+    }
+  ]
+}

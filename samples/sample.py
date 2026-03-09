@@ -1,12 +1,15 @@
-class Task:
-    def __init__(self, task_id: int, title: str):
-        self.id = task_id
-        self.title = title
-        self.is_completed = False
+class Rectangle:
+    def __init__(self, width: int, height: int):
+        self.width = width
+        self.height = height
 
-    def complete(self) -> None:
-        self.is_completed = True
-        print("Task completed: " + self.title)
+    def get_area(self) -> int:
+        return self.width * self.height
 
-my_task = Task(1, "Visualization")
-my_task.complete()
+    def get_perimeter(self) -> int:
+        return 2 * (self.width + self.height)
+
+if __name__ == "__main__":
+    rect = Rectangle(5, 10)
+    print(f"Area: {rect.get_area()}")
+    print(f"Perimeter: {rect.get_perimeter()}")

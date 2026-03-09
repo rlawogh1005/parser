@@ -2,7 +2,7 @@ const { execSync } = require('child_process');
 const path = require('path');
 const fs = require('fs');
 
-const { parseTypescript } = require('../src/parse_tsmorph');
+const { parseTypescript } = require('../src/parse_typescript');
 
 // 경로 설정
 const LIB_DIR = path.join(__dirname, 'lib');

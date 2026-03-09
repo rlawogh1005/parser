@@ -4,7 +4,6 @@ import com.github.javaparser.ParserConfiguration;
 import com.github.javaparser.Range;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
-import com.github.javaparser.ast.body.*;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -12,7 +11,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class ParseJava {
     public static void main(String[] args) {
@@ -43,34 +41,8 @@ public class ParseJava {
             if (result.isSuccessful() && result.getResult().isPresent()) {
                 CompilationUnit cu = result.getResult().get();
                 
-                StringBuilder sb = new StringBuilder();
-                sb.append("[\n");
-                
-                // 1. Directory 노드
-                sb.append("    {\n");
-                sb.append("        \"type\": \"directory\",\n");
-                sb.append("        \"name\": \"").append(escape(file.getParent() == null ? "." : file.getParent())).append("\",\n");
-                appendRange(sb, cu.getRange(), 8);
-                sb.append(",\n");
-                sb.append("        \"children\": [\n");
-
-                // 2. File 노드
-                sb.append("            {\n");
-                sb.append("                \"type\": \"file\",\n");
-                sb.append("                \"name\": \"").append(escape(file.getName())).append("\",\n");
-                appendRange(sb, cu.getRange(), 16);
-                sb.append(",\n");
-                sb.append("                \"children\": ");
-                
-                // 3. AST 내부 순회
-                sb.append(processChildren(cu, 20));
-                
-                sb.append("\n            }\n");
-                sb.append("        ]\n");
-                sb.append("    }\n");
-                sb.append("]");
-
-                System.out.println(sb.toString());
+                // 전처리 없이 최상위 노드부터 전체 AST 구조 그대로 덤프
+                System.out.println(traverseNode(cu, 0));
 
             } else {
                 System.err.println("Parse error: " + result.getProblems());
@@ -83,58 +55,54 @@ public class ParseJava {
         }
     }
 
-    private static String processChildren(Node node, int indent) {
-        List<Node> targetChildren = node.getChildNodes().stream()
-                .filter(ParseJava::isTargetNode)
-                .collect(Collectors.toList());
-
-        if (targetChildren.isEmpty()) {
-            return "[]";
-        }
-
+    private static String traverseNode(Node node, int indent) {
         StringBuilder sb = new StringBuilder();
-        sb.append("[\n");
-        
         String indentStr = " ".repeat(indent);
-        String innerIndent = " ".repeat(indent + 4);
+        String innerIndent = " ".repeat(indent + 2);
 
-        for (int i = 0; i < targetChildren.size(); i++) {
-            Node child = targetChildren.get(i);
-            sb.append(indentStr).append("{\n");
-            
-            sb.append(innerIndent).append("\"type\": \"").append(getNodeType(child)).append("\",\n");
-            sb.append(innerIndent).append("\"name\": \"").append(escape(getNodeName(child))).append("\",\n");
-            
-            appendRange(sb, child.getRange(), indent + 4);
-            
-            sb.append(",\n").append(innerIndent).append("\"children\": ");
-            sb.append(processChildren(child, indent + 8));
-            
-            sb.append("\n").append(indentStr).append("}");
-            
-            if (i < targetChildren.size() - 1) {
-                sb.append(",\n");
-            }
+        sb.append("{\n");
+        sb.append(innerIndent).append("\"kind\": \"").append(node.getClass().getSimpleName()).append("\",\n");
+
+        // 소스코드 데이터 (text)
+        Optional<String> tokenRangeStr = node.getTokenRange().map(Object::toString);
+        if (tokenRangeStr.isPresent()) {
+            sb.append(innerIndent).append("\"text\": \"").append(escape(tokenRangeStr.get())).append("\",\n");
         }
-        sb.append("\n").append(" ".repeat(indent - 4)).append("]");
+
+        // 위치 데이터 (range)
+        appendRange(sb, node.getRange(), indent + 2);
+
+        // 자식 노드 순회
+        List<Node> children = node.getChildNodes();
+        if (!children.isEmpty()) {
+            sb.append(",\n").append(innerIndent).append("\"children\": [\n");
+            for (int i = 0; i < children.size(); i++) {
+                sb.append(innerIndent).append("  ").append(traverseNode(children.get(i), indent + 4));
+                if (i < children.size() - 1) {
+                    sb.append(",");
+                }
+                sb.append("\n");
+            }
+            sb.append(innerIndent).append("]\n");
+        } else {
+            sb.append("\n");
+        }
+
+        sb.append(indentStr).append("}");
         return sb.toString();
     }
 
     private static void appendRange(StringBuilder sb, Optional<Range> rangeOpt, int indent) {
         String indentStr = " ".repeat(indent);
-        String innerIndent = " ".repeat(indent + 4);
+        String innerIndent = " ".repeat(indent + 2);
         
         sb.append(indentStr).append("\"range\": {\n");
         if (rangeOpt.isPresent()) {
             Range r = rangeOpt.get();
-            sb.append(innerIndent).append("\"start\": {\n");
-            sb.append(innerIndent).append("    \"line\": ").append(r.begin.line).append(",\n");
-            sb.append(innerIndent).append("    \"col\": ").append(r.begin.column).append("\n");
-            sb.append(innerIndent).append("},\n");
-            sb.append(innerIndent).append("\"end\": {\n");
-            sb.append(innerIndent).append("    \"line\": ").append(r.end.line).append(",\n");
-            sb.append(innerIndent).append("    \"col\": ").append(r.end.column).append("\n");
-            sb.append(innerIndent).append("}\n");
+            sb.append(innerIndent).append("\"start\": { \"line\": ").append(r.begin.line)
+              .append(", \"col\": ").append(r.begin.column).append(" },\n");
+            sb.append(innerIndent).append("\"end\": { \"line\": ").append(r.end.line)
+              .append(", \"col\": ").append(r.end.column).append(" }\n");
         } else {
             sb.append(innerIndent).append("\"start\": { \"line\": 0, \"col\": 0 },\n");
             sb.append(innerIndent).append("\"end\": { \"line\": 0, \"col\": 0 }\n");
@@ -142,40 +110,8 @@ public class ParseJava {
         sb.append(indentStr).append("}");
     }
 
-    private static boolean isTargetNode(Node node) {
-        return node instanceof TypeDeclaration || 
-               node instanceof MethodDeclaration || 
-               node instanceof ConstructorDeclaration;
-    }
-
-    // [수정됨] Switch Pattern Matching -> if-else instanceof 변경
-    private static String getNodeType(Node node) {
-        if (node instanceof ClassOrInterfaceDeclaration) {
-            return ((ClassOrInterfaceDeclaration) node).isInterface() ? "interface" : "class";
-        }
-        if (node instanceof EnumDeclaration) return "enum";
-        if (node instanceof RecordDeclaration) return "record";
-        if (node instanceof MethodDeclaration) return "method";
-        if (node instanceof ConstructorDeclaration) return "constructor";
-        return "unknown";
-    }
-
-    // [수정됨] Switch Pattern Matching -> if-else instanceof 변경
-    private static String getNodeName(Node node) {
-        if (node instanceof TypeDeclaration) {
-            return ((TypeDeclaration<?>) node).getNameAsString();
-        }
-        if (node instanceof MethodDeclaration) {
-            return ((MethodDeclaration) node).getNameAsString();
-        }
-        if (node instanceof ConstructorDeclaration) {
-            return ((ConstructorDeclaration) node).getNameAsString();
-        }
-        return "-";
-    }
-
     private static String escape(String s) {
         if (s == null) return "";
-        return s.replace("\\", "\\\\").replace("\"", "\\\"");
+        return s.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "\\r").replace("\t", "\\t");
     }
 }

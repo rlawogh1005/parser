@@ -1,0 +1,141 @@
+Module(
+    body=[
+        ClassDef(
+            name='Rectangle',
+            bases=[],
+            keywords=[],
+            body=[
+                FunctionDef(
+                    name='__init__',
+                    args=arguments(
+                        posonlyargs=[],
+                        args=[
+                            arg(arg='self'),
+                            arg(
+                                arg='width',
+                                annotation=Name(id='int', ctx=Load())),
+                            arg(
+                                arg='height',
+                                annotation=Name(id='int', ctx=Load()))],
+                        kwonlyargs=[],
+                        kw_defaults=[],
+                        defaults=[]),
+                    body=[
+                        Assign(
+                            targets=[
+                                Attribute(
+                                    value=Name(id='self', ctx=Load()),
+                                    attr='width',
+                                    ctx=Store())],
+                            value=Name(id='width', ctx=Load())),
+                        Assign(
+                            targets=[
+                                Attribute(
+                                    value=Name(id='self', ctx=Load()),
+                                    attr='height',
+                                    ctx=Store())],
+                            value=Name(id='height', ctx=Load()))],
+                    decorator_list=[]),
+                FunctionDef(
+                    name='get_area',
+                    args=arguments(
+                        posonlyargs=[],
+                        args=[
+                            arg(arg='self')],
+                        kwonlyargs=[],
+                        kw_defaults=[],
+                        defaults=[]),
+                    body=[
+                        Return(
+                            value=BinOp(
+                                left=Attribute(
+                                    value=Name(id='self', ctx=Load()),
+                                    attr='width',
+                                    ctx=Load()),
+                                op=Mult(),
+                                right=Attribute(
+                                    value=Name(id='self', ctx=Load()),
+                                    attr='height',
+                                    ctx=Load())))],
+                    decorator_list=[],
+                    returns=Name(id='int', ctx=Load())),
+                FunctionDef(
+                    name='get_perimeter',
+                    args=arguments(
+                        posonlyargs=[],
+                        args=[
+                            arg(arg='self')],
+                        kwonlyargs=[],
+                        kw_defaults=[],
+                        defaults=[]),
+                    body=[
+                        Return(
+                            value=BinOp(
+                                left=Constant(value=2),
+                                op=Mult(),
+                                right=BinOp(
+                                    left=Attribute(
+                                        value=Name(id='self', ctx=Load()),
+                                        attr='width',
+                                        ctx=Load()),
+                                    op=Add(),
+                                    right=Attribute(
+                                        value=Name(id='self', ctx=Load()),
+                                        attr='height',
+                                        ctx=Load()))))],
+                    decorator_list=[],
+                    returns=Name(id='int', ctx=Load()))],
+            decorator_list=[]),
+        If(
+            test=Compare(
+                left=Name(id='__name__', ctx=Load()),
+                ops=[
+                    Eq()],
+                comparators=[
+                    Constant(value='__main__')]),
+            body=[
+                Assign(
+                    targets=[
+                        Name(id='rect', ctx=Store())],
+                    value=Call(
+                        func=Name(id='Rectangle', ctx=Load()),
+                        args=[
+                            Constant(value=5),
+                            Constant(value=10)],
+                        keywords=[])),
+                Expr(
+                    value=Call(
+                        func=Name(id='print', ctx=Load()),
+                        args=[
+                            JoinedStr(
+                                values=[
+                                    Constant(value='Area: '),
+                                    FormattedValue(
+                                        value=Call(
+                                            func=Attribute(
+                                                value=Name(id='rect', ctx=Load()),
+                                                attr='get_area',
+                                                ctx=Load()),
+                                            args=[],
+                                            keywords=[]),
+                                        conversion=-1)])],
+                        keywords=[])),
+                Expr(
+                    value=Call(
+                        func=Name(id='print', ctx=Load()),
+                        args=[
+                            JoinedStr(
+                                values=[
+                                    Constant(value='Perimeter: '),
+                                    FormattedValue(
+                                        value=Call(
+                                            func=Attribute(
+                                                value=Name(id='rect', ctx=Load()),
+                                                attr='get_perimeter',
+                                                ctx=Load()),
+                                            args=[],
+                                            keywords=[]),
+                                        conversion=-1)])],
+                        keywords=[]))],
+            orelse=[])],
+    type_ignores=[])

@@ -1,21 +1,23 @@
-public class Task {
-    int id;
-    String title;
-    boolean isCompleted;
+public class Rectangle {
+    private int width;
+    private int height;
 
-    public Task(int id, String title) {
-        this.id = id;
-        this.title = title;
-        this.isCompleted = false;
+    public Rectangle(int width, int height) {
+        this.width = width;
+        this.height = height;
     }
 
-    public void complete() {
-        this.isCompleted = true;
-        System.out.println("Task completed: " + this.title);
+    public int getArea() {
+        return this.width * this.height;
+    }
+
+    public int getPerimeter() {
+        return 2 * (this.width + this.height);
     }
 
     public static void main(String[] args) {
-        Task myTask = new Task(1, "Visualization");
-        myTask.complete();
+        Rectangle rect = new Rectangle(5, 10);
+        System.out.println("Area: " + rect.getArea());
+        System.out.println("Perimeter: " + rect.getPerimeter());
     }
 }

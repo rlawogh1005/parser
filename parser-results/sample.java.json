@@ -1,0 +1,1034 @@
+{
+  "kind": "CompilationUnit",
+  "text": "public class Rectangle {\n    private int width;\n    private int height;\n\n    public Rectangle(int width, int height) {\n        this.width = width;\n        this.height = height;\n    }\n\n    public int getArea() {\n        return this.width * this.height;\n    }\n\n    public int getPerimeter() {\n        return 2 * (this.width + this.height);\n    }\n\n    public static void main(String[] args) {\n        Rectangle rect = new Rectangle(5, 10);\n        System.out.println(\"Area: \" + rect.getArea());\n        System.out.println(\"Perimeter: \" + rect.getPerimeter());\n    }\n}",
+  "range": {
+    "start": { "line": 1, "col": 1 },
+    "end": { "line": 23, "col": 1 }
+  },
+  "children": [
+    {
+      "kind": "ClassOrInterfaceDeclaration",
+      "text": "public class Rectangle {\n    private int width;\n    private int height;\n\n    public Rectangle(int width, int height) {\n        this.width = width;\n        this.height = height;\n    }\n\n    public int getArea() {\n        return this.width * this.height;\n    }\n\n    public int getPerimeter() {\n        return 2 * (this.width + this.height);\n    }\n\n    public static void main(String[] args) {\n        Rectangle rect = new Rectangle(5, 10);\n        System.out.println(\"Area: \" + rect.getArea());\n        System.out.println(\"Perimeter: \" + rect.getPerimeter());\n    }\n}",
+      "range": {
+        "start": { "line": 1, "col": 1 },
+        "end": { "line": 23, "col": 1 }
+      },
+      "children": [
+        {
+          "kind": "Modifier",
+          "text": "public",
+          "range": {
+            "start": { "line": 1, "col": 1 },
+            "end": { "line": 1, "col": 6 }
+          }
+        },
+        {
+          "kind": "SimpleName",
+          "text": "Rectangle",
+          "range": {
+            "start": { "line": 1, "col": 14 },
+            "end": { "line": 1, "col": 22 }
+          }
+        },
+        {
+          "kind": "FieldDeclaration",
+          "text": "private int width;",
+          "range": {
+            "start": { "line": 2, "col": 5 },
+            "end": { "line": 2, "col": 22 }
+          },
+          "children": [
+            {
+              "kind": "Modifier",
+              "text": "private",
+              "range": {
+                "start": { "line": 2, "col": 5 },
+                "end": { "line": 2, "col": 11 }
+              }
+            },
+            {
+              "kind": "VariableDeclarator",
+              "text": "width",
+              "range": {
+                "start": { "line": 2, "col": 17 },
+                "end": { "line": 2, "col": 21 }
+              },
+              "children": [
+                {
+                  "kind": "PrimitiveType",
+                  "text": "int",
+                  "range": {
+                    "start": { "line": 2, "col": 13 },
+                    "end": { "line": 2, "col": 15 }
+                  }
+                },
+                {
+                  "kind": "SimpleName",
+                  "text": "width",
+                  "range": {
+                    "start": { "line": 2, "col": 17 },
+                    "end": { "line": 2, "col": 21 }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "FieldDeclaration",
+          "text": "private int height;",
+          "range": {
+            "start": { "line": 3, "col": 5 },
+            "end": { "line": 3, "col": 23 }
+          },
+          "children": [
+            {
+              "kind": "Modifier",
+              "text": "private",
+              "range": {
+                "start": { "line": 3, "col": 5 },
+                "end": { "line": 3, "col": 11 }
+              }
+            },
+            {
+              "kind": "VariableDeclarator",
+              "text": "height",
+              "range": {
+                "start": { "line": 3, "col": 17 },
+                "end": { "line": 3, "col": 22 }
+              },
+              "children": [
+                {
+                  "kind": "PrimitiveType",
+                  "text": "int",
+                  "range": {
+                    "start": { "line": 3, "col": 13 },
+                    "end": { "line": 3, "col": 15 }
+                  }
+                },
+                {
+                  "kind": "SimpleName",
+                  "text": "height",
+                  "range": {
+                    "start": { "line": 3, "col": 17 },
+                    "end": { "line": 3, "col": 22 }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "ConstructorDeclaration",
+          "text": "public Rectangle(int width, int height) {\n        this.width = width;\n        this.height = height;\n    }",
+          "range": {
+            "start": { "line": 5, "col": 5 },
+            "end": { "line": 8, "col": 5 }
+          },
+          "children": [
+            {
+              "kind": "Modifier",
+              "text": "public",
+              "range": {
+                "start": { "line": 5, "col": 5 },
+                "end": { "line": 5, "col": 10 }
+              }
+            },
+            {
+              "kind": "SimpleName",
+              "text": "Rectangle",
+              "range": {
+                "start": { "line": 5, "col": 12 },
+                "end": { "line": 5, "col": 20 }
+              }
+            },
+            {
+              "kind": "Parameter",
+              "text": "int width",
+              "range": {
+                "start": { "line": 5, "col": 22 },
+                "end": { "line": 5, "col": 30 }
+              },
+              "children": [
+                {
+                  "kind": "PrimitiveType",
+                  "text": "int",
+                  "range": {
+                    "start": { "line": 5, "col": 22 },
+                    "end": { "line": 5, "col": 24 }
+                  }
+                },
+                {
+                  "kind": "SimpleName",
+                  "text": "width",
+                  "range": {
+                    "start": { "line": 5, "col": 26 },
+                    "end": { "line": 5, "col": 30 }
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "Parameter",
+              "text": "int height",
+              "range": {
+                "start": { "line": 5, "col": 33 },
+                "end": { "line": 5, "col": 42 }
+              },
+              "children": [
+                {
+                  "kind": "PrimitiveType",
+                  "text": "int",
+                  "range": {
+                    "start": { "line": 5, "col": 33 },
+                    "end": { "line": 5, "col": 35 }
+                  }
+                },
+                {
+                  "kind": "SimpleName",
+                  "text": "height",
+                  "range": {
+                    "start": { "line": 5, "col": 37 },
+                    "end": { "line": 5, "col": 42 }
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "BlockStmt",
+              "text": "{\n        this.width = width;\n        this.height = height;\n    }",
+              "range": {
+                "start": { "line": 5, "col": 45 },
+                "end": { "line": 8, "col": 5 }
+              },
+              "children": [
+                {
+                  "kind": "ExpressionStmt",
+                  "text": "this.width = width;",
+                  "range": {
+                    "start": { "line": 6, "col": 9 },
+                    "end": { "line": 6, "col": 27 }
+                  },
+                  "children": [
+                    {
+                      "kind": "AssignExpr",
+                      "text": "this.width = width",
+                      "range": {
+                        "start": { "line": 6, "col": 9 },
+                        "end": { "line": 6, "col": 26 }
+                      },
+                      "children": [
+                        {
+                          "kind": "FieldAccessExpr",
+                          "text": "this.width",
+                          "range": {
+                            "start": { "line": 6, "col": 9 },
+                            "end": { "line": 6, "col": 18 }
+                          },
+                          "children": [
+                            {
+                              "kind": "ThisExpr",
+                              "text": "this",
+                              "range": {
+                                "start": { "line": 6, "col": 9 },
+                                "end": { "line": 6, "col": 12 }
+                              }
+                            },
+                            {
+                              "kind": "SimpleName",
+                              "text": "width",
+                              "range": {
+                                "start": { "line": 6, "col": 14 },
+                                "end": { "line": 6, "col": 18 }
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "kind": "NameExpr",
+                          "text": "width",
+                          "range": {
+                            "start": { "line": 6, "col": 22 },
+                            "end": { "line": 6, "col": 26 }
+                          },
+                          "children": [
+                            {
+                              "kind": "SimpleName",
+                              "text": "width",
+                              "range": {
+                                "start": { "line": 6, "col": 22 },
+                                "end": { "line": 6, "col": 26 }
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "kind": "ExpressionStmt",
+                  "text": "this.height = height;",
+                  "range": {
+                    "start": { "line": 7, "col": 9 },
+                    "end": { "line": 7, "col": 29 }
+                  },
+                  "children": [
+                    {
+                      "kind": "AssignExpr",
+                      "text": "this.height = height",
+                      "range": {
+                        "start": { "line": 7, "col": 9 },
+                        "end": { "line": 7, "col": 28 }
+                      },
+                      "children": [
+                        {
+                          "kind": "FieldAccessExpr",
+                          "text": "this.height",
+                          "range": {
+                            "start": { "line": 7, "col": 9 },
+                            "end": { "line": 7, "col": 19 }
+                          },
+                          "children": [
+                            {
+                              "kind": "ThisExpr",
+                              "text": "this",
+                              "range": {
+                                "start": { "line": 7, "col": 9 },
+                                "end": { "line": 7, "col": 12 }
+                              }
+                            },
+                            {
+                              "kind": "SimpleName",
+                              "text": "height",
+                              "range": {
+                                "start": { "line": 7, "col": 14 },
+                                "end": { "line": 7, "col": 19 }
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "kind": "NameExpr",
+                          "text": "height",
+                          "range": {
+                            "start": { "line": 7, "col": 23 },
+                            "end": { "line": 7, "col": 28 }
+                          },
+                          "children": [
+                            {
+                              "kind": "SimpleName",
+                              "text": "height",
+                              "range": {
+                                "start": { "line": 7, "col": 23 },
+                                "end": { "line": 7, "col": 28 }
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "MethodDeclaration",
+          "text": "public int getArea() {\n        return this.width * this.height;\n    }",
+          "range": {
+            "start": { "line": 10, "col": 5 },
+            "end": { "line": 12, "col": 5 }
+          },
+          "children": [
+            {
+              "kind": "Modifier",
+              "text": "public",
+              "range": {
+                "start": { "line": 10, "col": 5 },
+                "end": { "line": 10, "col": 10 }
+              }
+            },
+            {
+              "kind": "SimpleName",
+              "text": "getArea",
+              "range": {
+                "start": { "line": 10, "col": 16 },
+                "end": { "line": 10, "col": 22 }
+              }
+            },
+            {
+              "kind": "PrimitiveType",
+              "text": "int",
+              "range": {
+                "start": { "line": 10, "col": 12 },
+                "end": { "line": 10, "col": 14 }
+              }
+            },
+            {
+              "kind": "BlockStmt",
+              "text": "{\n        return this.width * this.height;\n    }",
+              "range": {
+                "start": { "line": 10, "col": 26 },
+                "end": { "line": 12, "col": 5 }
+              },
+              "children": [
+                {
+                  "kind": "ReturnStmt",
+                  "text": "return this.width * this.height;",
+                  "range": {
+                    "start": { "line": 11, "col": 9 },
+                    "end": { "line": 11, "col": 40 }
+                  },
+                  "children": [
+                    {
+                      "kind": "BinaryExpr",
+                      "text": "this.width * this.height",
+                      "range": {
+                        "start": { "line": 11, "col": 16 },
+                        "end": { "line": 11, "col": 39 }
+                      },
+                      "children": [
+                        {
+                          "kind": "FieldAccessExpr",
+                          "text": "this.width",
+                          "range": {
+                            "start": { "line": 11, "col": 16 },
+                            "end": { "line": 11, "col": 25 }
+                          },
+                          "children": [
+                            {
+                              "kind": "ThisExpr",
+                              "text": "this",
+                              "range": {
+                                "start": { "line": 11, "col": 16 },
+                                "end": { "line": 11, "col": 19 }
+                              }
+                            },
+                            {
+                              "kind": "SimpleName",
+                              "text": "width",
+                              "range": {
+                                "start": { "line": 11, "col": 21 },
+                                "end": { "line": 11, "col": 25 }
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "kind": "FieldAccessExpr",
+                          "text": "this.height",
+                          "range": {
+                            "start": { "line": 11, "col": 29 },
+                            "end": { "line": 11, "col": 39 }
+                          },
+                          "children": [
+                            {
+                              "kind": "ThisExpr",
+                              "text": "this",
+                              "range": {
+                                "start": { "line": 11, "col": 29 },
+                                "end": { "line": 11, "col": 32 }
+                              }
+                            },
+                            {
+                              "kind": "SimpleName",
+                              "text": "height",
+                              "range": {
+                                "start": { "line": 11, "col": 34 },
+                                "end": { "line": 11, "col": 39 }
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "MethodDeclaration",
+          "text": "public int getPerimeter() {\n        return 2 * (this.width + this.height);\n    }",
+          "range": {
+            "start": { "line": 14, "col": 5 },
+            "end": { "line": 16, "col": 5 }
+          },
+          "children": [
+            {
+              "kind": "Modifier",
+              "text": "public",
+              "range": {
+                "start": { "line": 14, "col": 5 },
+                "end": { "line": 14, "col": 10 }
+              }
+            },
+            {
+              "kind": "SimpleName",
+              "text": "getPerimeter",
+              "range": {
+                "start": { "line": 14, "col": 16 },
+                "end": { "line": 14, "col": 27 }
+              }
+            },
+            {
+              "kind": "PrimitiveType",
+              "text": "int",
+              "range": {
+                "start": { "line": 14, "col": 12 },
+                "end": { "line": 14, "col": 14 }
+              }
+            },
+            {
+              "kind": "BlockStmt",
+              "text": "{\n        return 2 * (this.width + this.height);\n    }",
+              "range": {
+                "start": { "line": 14, "col": 31 },
+                "end": { "line": 16, "col": 5 }
+              },
+              "children": [
+                {
+                  "kind": "ReturnStmt",
+                  "text": "return 2 * (this.width + this.height);",
+                  "range": {
+                    "start": { "line": 15, "col": 9 },
+                    "end": { "line": 15, "col": 46 }
+                  },
+                  "children": [
+                    {
+                      "kind": "BinaryExpr",
+                      "text": "2 * (this.width + this.height)",
+                      "range": {
+                        "start": { "line": 15, "col": 16 },
+                        "end": { "line": 15, "col": 45 }
+                      },
+                      "children": [
+                        {
+                          "kind": "IntegerLiteralExpr",
+                          "text": "2",
+                          "range": {
+                            "start": { "line": 15, "col": 16 },
+                            "end": { "line": 15, "col": 16 }
+                          }
+                        },
+                        {
+                          "kind": "EnclosedExpr",
+                          "text": "(this.width + this.height)",
+                          "range": {
+                            "start": { "line": 15, "col": 20 },
+                            "end": { "line": 15, "col": 45 }
+                          },
+                          "children": [
+                            {
+                              "kind": "BinaryExpr",
+                              "text": "this.width + this.height",
+                              "range": {
+                                "start": { "line": 15, "col": 21 },
+                                "end": { "line": 15, "col": 44 }
+                              },
+                              "children": [
+                                {
+                                  "kind": "FieldAccessExpr",
+                                  "text": "this.width",
+                                  "range": {
+                                    "start": { "line": 15, "col": 21 },
+                                    "end": { "line": 15, "col": 30 }
+                                  },
+                                  "children": [
+                                    {
+                                      "kind": "ThisExpr",
+                                      "text": "this",
+                                      "range": {
+                                        "start": { "line": 15, "col": 21 },
+                                        "end": { "line": 15, "col": 24 }
+                                      }
+                                    },
+                                    {
+                                      "kind": "SimpleName",
+                                      "text": "width",
+                                      "range": {
+                                        "start": { "line": 15, "col": 26 },
+                                        "end": { "line": 15, "col": 30 }
+                                      }
+                                    }
+                                  ]
+                                },
+                                {
+                                  "kind": "FieldAccessExpr",
+                                  "text": "this.height",
+                                  "range": {
+                                    "start": { "line": 15, "col": 34 },
+                                    "end": { "line": 15, "col": 44 }
+                                  },
+                                  "children": [
+                                    {
+                                      "kind": "ThisExpr",
+                                      "text": "this",
+                                      "range": {
+                                        "start": { "line": 15, "col": 34 },
+                                        "end": { "line": 15, "col": 37 }
+                                      }
+                                    },
+                                    {
+                                      "kind": "SimpleName",
+                                      "text": "height",
+                                      "range": {
+                                        "start": { "line": 15, "col": 39 },
+                                        "end": { "line": 15, "col": 44 }
+                                      }
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "MethodDeclaration",
+          "text": "public static void main(String[] args) {\n        Rectangle rect = new Rectangle(5, 10);\n        System.out.println(\"Area: \" + rect.getArea());\n        System.out.println(\"Perimeter: \" + rect.getPerimeter());\n    }",
+          "range": {
+            "start": { "line": 18, "col": 5 },
+            "end": { "line": 22, "col": 5 }
+          },
+          "children": [
+            {
+              "kind": "Modifier",
+              "text": "public",
+              "range": {
+                "start": { "line": 18, "col": 5 },
+                "end": { "line": 18, "col": 10 }
+              }
+            },
+            {
+              "kind": "Modifier",
+              "text": "static",
+              "range": {
+                "start": { "line": 18, "col": 12 },
+                "end": { "line": 18, "col": 17 }
+              }
+            },
+            {
+              "kind": "SimpleName",
+              "text": "main",
+              "range": {
+                "start": { "line": 18, "col": 24 },
+                "end": { "line": 18, "col": 27 }
+              }
+            },
+            {
+              "kind": "Parameter",
+              "text": "String[] args",
+              "range": {
+                "start": { "line": 18, "col": 29 },
+                "end": { "line": 18, "col": 41 }
+              },
+              "children": [
+                {
+                  "kind": "ArrayType",
+                  "text": "String[]",
+                  "range": {
+                    "start": { "line": 18, "col": 29 },
+                    "end": { "line": 18, "col": 36 }
+                  },
+                  "children": [
+                    {
+                      "kind": "ClassOrInterfaceType",
+                      "text": "String",
+                      "range": {
+                        "start": { "line": 18, "col": 29 },
+                        "end": { "line": 18, "col": 34 }
+                      },
+                      "children": [
+                        {
+                          "kind": "SimpleName",
+                          "text": "String",
+                          "range": {
+                            "start": { "line": 18, "col": 29 },
+                            "end": { "line": 18, "col": 34 }
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "kind": "SimpleName",
+                  "text": "args",
+                  "range": {
+                    "start": { "line": 18, "col": 38 },
+                    "end": { "line": 18, "col": 41 }
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "VoidType",
+              "text": "void",
+              "range": {
+                "start": { "line": 18, "col": 19 },
+                "end": { "line": 18, "col": 22 }
+              }
+            },
+            {
+              "kind": "BlockStmt",
+              "text": "{\n        Rectangle rect = new Rectangle(5, 10);\n        System.out.println(\"Area: \" + rect.getArea());\n        System.out.println(\"Perimeter: \" + rect.getPerimeter());\n    }",
+              "range": {
+                "start": { "line": 18, "col": 44 },
+                "end": { "line": 22, "col": 5 }
+              },
+              "children": [
+                {
+                  "kind": "ExpressionStmt",
+                  "text": "Rectangle rect = new Rectangle(5, 10);",
+                  "range": {
+                    "start": { "line": 19, "col": 9 },
+                    "end": { "line": 19, "col": 46 }
+                  },
+                  "children": [
+                    {
+                      "kind": "VariableDeclarationExpr",
+                      "text": "Rectangle rect = new Rectangle(5, 10)",
+                      "range": {
+                        "start": { "line": 19, "col": 9 },
+                        "end": { "line": 19, "col": 45 }
+                      },
+                      "children": [
+                        {
+                          "kind": "VariableDeclarator",
+                          "text": "rect = new Rectangle(5, 10)",
+                          "range": {
+                            "start": { "line": 19, "col": 19 },
+                            "end": { "line": 19, "col": 45 }
+                          },
+                          "children": [
+                            {
+                              "kind": "ClassOrInterfaceType",
+                              "text": "Rectangle",
+                              "range": {
+                                "start": { "line": 19, "col": 9 },
+                                "end": { "line": 19, "col": 17 }
+                              },
+                              "children": [
+                                {
+                                  "kind": "SimpleName",
+                                  "text": "Rectangle",
+                                  "range": {
+                                    "start": { "line": 19, "col": 9 },
+                                    "end": { "line": 19, "col": 17 }
+                                  }
+                                }
+                              ]
+                            },
+                            {
+                              "kind": "SimpleName",
+                              "text": "rect",
+                              "range": {
+                                "start": { "line": 19, "col": 19 },
+                                "end": { "line": 19, "col": 22 }
+                              }
+                            },
+                            {
+                              "kind": "ObjectCreationExpr",
+                              "text": "new Rectangle(5, 10)",
+                              "range": {
+                                "start": { "line": 19, "col": 26 },
+                                "end": { "line": 19, "col": 45 }
+                              },
+                              "children": [
+                                {
+                                  "kind": "ClassOrInterfaceType",
+                                  "text": "Rectangle",
+                                  "range": {
+                                    "start": { "line": 19, "col": 30 },
+                                    "end": { "line": 19, "col": 38 }
+                                  },
+                                  "children": [
+                                    {
+                                      "kind": "SimpleName",
+                                      "text": "Rectangle",
+                                      "range": {
+                                        "start": { "line": 19, "col": 30 },
+                                        "end": { "line": 19, "col": 38 }
+                                      }
+                                    }
+                                  ]
+                                },
+                                {
+                                  "kind": "IntegerLiteralExpr",
+                                  "text": "5",
+                                  "range": {
+                                    "start": { "line": 19, "col": 40 },
+                                    "end": { "line": 19, "col": 40 }
+                                  }
+                                },
+                                {
+                                  "kind": "IntegerLiteralExpr",
+                                  "text": "10",
+                                  "range": {
+                                    "start": { "line": 19, "col": 43 },
+                                    "end": { "line": 19, "col": 44 }
+                                  }
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "kind": "ExpressionStmt",
+                  "text": "System.out.println(\"Area: \" + rect.getArea());",
+                  "range": {
+                    "start": { "line": 20, "col": 9 },
+                    "end": { "line": 20, "col": 54 }
+                  },
+                  "children": [
+                    {
+                      "kind": "MethodCallExpr",
+                      "text": "System.out.println(\"Area: \" + rect.getArea())",
+                      "range": {
+                        "start": { "line": 20, "col": 9 },
+                        "end": { "line": 20, "col": 53 }
+                      },
+                      "children": [
+                        {
+                          "kind": "FieldAccessExpr",
+                          "text": "System.out",
+                          "range": {
+                            "start": { "line": 20, "col": 9 },
+                            "end": { "line": 20, "col": 18 }
+                          },
+                          "children": [
+                            {
+                              "kind": "NameExpr",
+                              "text": "System",
+                              "range": {
+                                "start": { "line": 20, "col": 9 },
+                                "end": { "line": 20, "col": 14 }
+                              },
+                              "children": [
+                                {
+                                  "kind": "SimpleName",
+                                  "text": "System",
+                                  "range": {
+                                    "start": { "line": 20, "col": 9 },
+                                    "end": { "line": 20, "col": 14 }
+                                  }
+                                }
+                              ]
+                            },
+                            {
+                              "kind": "SimpleName",
+                              "text": "out",
+                              "range": {
+                                "start": { "line": 20, "col": 16 },
+                                "end": { "line": 20, "col": 18 }
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "kind": "SimpleName",
+                          "text": "println",
+                          "range": {
+                            "start": { "line": 20, "col": 20 },
+                            "end": { "line": 20, "col": 26 }
+                          }
+                        },
+                        {
+                          "kind": "BinaryExpr",
+                          "text": "\"Area: \" + rect.getArea()",
+                          "range": {
+                            "start": { "line": 20, "col": 28 },
+                            "end": { "line": 20, "col": 52 }
+                          },
+                          "children": [
+                            {
+                              "kind": "StringLiteralExpr",
+                              "text": "\"Area: \"",
+                              "range": {
+                                "start": { "line": 20, "col": 28 },
+                                "end": { "line": 20, "col": 35 }
+                              }
+                            },
+                            {
+                              "kind": "MethodCallExpr",
+                              "text": "rect.getArea()",
+                              "range": {
+                                "start": { "line": 20, "col": 39 },
+                                "end": { "line": 20, "col": 52 }
+                              },
+                              "children": [
+                                {
+                                  "kind": "NameExpr",
+                                  "text": "rect",
+                                  "range": {
+                                    "start": { "line": 20, "col": 39 },
+                                    "end": { "line": 20, "col": 42 }
+                                  },
+                                  "children": [
+                                    {
+                                      "kind": "SimpleName",
+                                      "text": "rect",
+                                      "range": {
+                                        "start": { "line": 20, "col": 39 },
+                                        "end": { "line": 20, "col": 42 }
+                                      }
+                                    }
+                                  ]
+                                },
+                                {
+                                  "kind": "SimpleName",
+                                  "text": "getArea",
+                                  "range": {
+                                    "start": { "line": 20, "col": 44 },
+                                    "end": { "line": 20, "col": 50 }
+                                  }
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "kind": "ExpressionStmt",
+                  "text": "System.out.println(\"Perimeter: \" + rect.getPerimeter());",
+                  "range": {
+                    "start": { "line": 21, "col": 9 },
+                    "end": { "line": 21, "col": 64 }
+                  },
+                  "children": [
+                    {
+                      "kind": "MethodCallExpr",
+                      "text": "System.out.println(\"Perimeter: \" + rect.getPerimeter())",
+                      "range": {
+                        "start": { "line": 21, "col": 9 },
+                        "end": { "line": 21, "col": 63 }
+                      },
+                      "children": [
+                        {
+                          "kind": "FieldAccessExpr",
+                          "text": "System.out",
+                          "range": {
+                            "start": { "line": 21, "col": 9 },
+                            "end": { "line": 21, "col": 18 }
+                          },
+                          "children": [
+                            {
+                              "kind": "NameExpr",
+                              "text": "System",
+                              "range": {
+                                "start": { "line": 21, "col": 9 },
+                                "end": { "line": 21, "col": 14 }
+                              },
+                              "children": [
+                                {
+                                  "kind": "SimpleName",
+                                  "text": "System",
+                                  "range": {
+                                    "start": { "line": 21, "col": 9 },
+                                    "end": { "line": 21, "col": 14 }
+                                  }
+                                }
+                              ]
+                            },
+                            {
+                              "kind": "SimpleName",
+                              "text": "out",
+                              "range": {
+                                "start": { "line": 21, "col": 16 },
+                                "end": { "line": 21, "col": 18 }
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "kind": "SimpleName",
+                          "text": "println",
+                          "range": {
+                            "start": { "line": 21, "col": 20 },
+                            "end": { "line": 21, "col": 26 }
+                          }
+                        },
+                        {
+                          "kind": "BinaryExpr",
+                          "text": "\"Perimeter: \" + rect.getPerimeter()",
+                          "range": {
+                            "start": { "line": 21, "col": 28 },
+                            "end": { "line": 21, "col": 62 }
+                          },
+                          "children": [
+                            {
+                              "kind": "StringLiteralExpr",
+                              "text": "\"Perimeter: \"",
+                              "range": {
+                                "start": { "line": 21, "col": 28 },
+                                "end": { "line": 21, "col": 40 }
+                              }
+                            },
+                            {
+                              "kind": "MethodCallExpr",
+                              "text": "rect.getPerimeter()",
+                              "range": {
+                                "start": { "line": 21, "col": 44 },
+                                "end": { "line": 21, "col": 62 }
+                              },
+                              "children": [
+                                {
+                                  "kind": "NameExpr",
+                                  "text": "rect",
+                                  "range": {
+                                    "start": { "line": 21, "col": 44 },
+                                    "end": { "line": 21, "col": 47 }
+                                  },
+                                  "children": [
+                                    {
+                                      "kind": "SimpleName",
+                                      "text": "rect",
+                                      "range": {
+                                        "start": { "line": 21, "col": 44 },
+                                        "end": { "line": 21, "col": 47 }
+                                      }
+                                    }
+                                  ]
+                                },
+                                {
+                                  "kind": "SimpleName",
+                                  "text": "getPerimeter",
+                                  "range": {
+                                    "start": { "line": 21, "col": 49 },
+                                    "end": { "line": 21, "col": 60 }
+                                  }
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
