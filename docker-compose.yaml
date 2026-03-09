@@ -1,11 +1,11 @@
 version: '3.8'
 
 services:
-  mp-parser:
+  codevi-parser:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: mp-parser
+    container_name: codevi-parser
     ports:
       - "3001:3001"
     volumes:
