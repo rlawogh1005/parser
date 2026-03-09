@@ -1,11 +1,21 @@
-public class Sample {
-    private String message;
+public class Task {
+    int id;
+    String title;
+    boolean isCompleted;
 
-    public Sample(String message) {
-        this.message = message;
+    public Task(int id, String title) {
+        this.id = id;
+        this.title = title;
+        this.isCompleted = false;
     }
 
-    public void printMessage() {
-        System.out.println("Message: " + message);
+    public void complete() {
+        this.isCompleted = true;
+        System.out.println("Task completed: " + this.title);
+    }
+
+    public static void main(String[] args) {
+        Task myTask = new Task(1, "Visualization");
+        myTask.complete();
     }
 }

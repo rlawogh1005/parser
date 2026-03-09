@@ -1,14 +1,15 @@
-// Sample TypeScript Code
-interface User {
-    id: number;
-    username: string;
-    email?: string;
-}
+class Task {
+    public isCompleted: boolean = false;
 
-class UserManager {
-    private users: User[] = [];
+    constructor(public id: number, public title: string) { }
 
-    addUser(user: User): void {
-        this.users.push(user);
+    complete(): void {
+        this.isCompleted = true;
+        console.log(`Task completed: ${this.title}`);
     }
 }
+
+const myTask = new Task(1, "Visualization");
+myTask.complete();
+
+export { };

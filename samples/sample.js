@@ -1,42 +1,15 @@
-// Enhanced Sample JavaScript Code
-
-// Global Variable
-const GLOBAL_CONFIG = {
-    version: "1.0.0",
-    debug: true
-};
-
-/**
- * Rectangle Class
- */
-class Rectangle {
-    constructor(width, height) {
-        this.width = width;
-        this.height = height;
+class Task {
+    constructor(id, title) {
+        this.id = id;
+        this.title = title;
+        this.isCompleted = false;
     }
 
-    // Method with multiple parameters
-    calculateArea(scale = 1, unit = 'cm') {
-        const area = this.width * this.height * scale; // Local variable
-        console.log(`Area: ${area} ${unit}^2`);
-        return area;
-    }
-
-    // Static method
-    static createSquare(side) {
-        return new Rectangle(side, side);
+    complete() {
+        this.isCompleted = true;
+        console.log("Task completed: " + this.title);
     }
 }
 
-// Function with multiple parameters
-function addNumbers(a, b) {
-    let result = a + b; // Local variable
-    return result;
-}
-
-// Main execution
-const rect = new Rectangle(10, 20);
-rect.calculateArea(1.5, 'm');
-
-const sum = addNumbers(5, 10);
-console.log("Sum:", sum);
+const myTask = new Task(1, "Visualization");
+myTask.complete();
