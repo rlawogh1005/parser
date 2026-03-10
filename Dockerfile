@@ -30,4 +30,4 @@ ENV BACKEND_URL=http://codevi-backend:13000/ast-data
 ENV PORT=3001
 
 # 9. 실행
-CMD ["node", "index.js"]
+CMD ["node", "index_treesitter.js"]

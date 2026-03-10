@@ -1,0 +1,37 @@
+# 1. 빌드 및 런타임 환경 설정 - Debian 기반 선택 (Node.js + Python/Java/C 호환성)
+FROM node:20-bullseye-slim
+
+# 2. Raw Parser 구동 시 필요한 런타임 설치 환경 (Java, Python, C++ Clang)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3 \
+    default-jre \
+    default-jdk \
+    clang \
+    libclang-dev \
+    gcc \
+    g++ \
+    make \
+    && rm -rf /var/lib/apt/lists/*
+
+# 3. 작업 디렉토리 생성
+WORKDIR /app
+
+# 4. 의존성 파일 복사 및 설치
+COPY package.json package-lock.json* ./
+RUN npm install
+
+# 5. 소스 코드 복사
+COPY . .
+
+# 6. C 파서 빌드 (Clang AST 파싱기)
+RUN gcc src/parse_c.c -o src/parse_c -lclang || echo "Warning: C parser compile failed"
+
+# 7. 포트 설정
+EXPOSE 3002
+
+# 8. 환경 변수 기본값 설정
+ENV BACKEND_URL=http://codevi-backend:13000/ast-data
+ENV PORT=3002
+
+# 9. Raw Parser 전용 스크립트 실행
+CMD ["node", "index_raw.js"]

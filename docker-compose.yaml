@@ -1,26 +1,62 @@
 version: '3.8'
 
 services:
-  codevi-parser:
+  # 1. 기존 Tree-sitter 기반 파서 컨테이너 (포트 3001)
+  codevi-parser-tree-sitter:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: codevi-parser
+    container_name: codevi-parser-treesitter
     ports:
       - "3001:3001"
     volumes:
-      # [중요] 분석할 실제 소스 코드 경로를 /code에 마운트합니다.
-      # Jenkins 파이프라인 실행 시에는 WORKSPACE 경로로 대체될 수 있습니다.
       - ./samples:/code:ro
+      - ./benchmark-results/treesitter:/app/benchmark-results
     environment:
       - BACKEND_URL=http://codevi-backend:13000/ast-data
       - TARGET_DIR=/code
       - PORT=3001
+    # ── 벤치마크 공정 비교를 위한 리소스 제한
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 4g
+        reservations:
+          cpus: '1'
+          memory: 2g
+    networks:
+      - shared-net
+    restart: always
+
+  # 2. 신규 Raw AST(Java, Python, TS, C 등) 파서 컨테이너 (포트 3002)
+  codevi-parser-raw-ast:
+    build:
+      context: .
+      dockerfile: Dockerfile.raw
+    container_name: codevi-parser-raw
+    ports:
+      - "3002:3002"
+    volumes:
+      - ./samples:/code:ro
+      - ./benchmark-results/native-ast:/app/benchmark-results
+    environment:
+      - BACKEND_URL=http://codevi-backend:13000/ast-data
+      - TARGET_DIR=/code
+      - PORT=3002
+    # ── 벤치마크 공정 비교를 위한 리소스 제한
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 4g
+        reservations:
+          cpus: '1'
+          memory: 2g
     networks:
       - shared-net
     restart: always
 
 networks:
   shared-net:
-    # 기존에 생성된 네트워크를 사용하거나 새로 정의합니다.
     external: true
