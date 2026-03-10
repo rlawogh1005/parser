@@ -6,6 +6,8 @@ Temp.*
 *.class
 *.log
 .DS_Store
+benchmark-results/
+uploads/
 
 # Allow payloads
 !payload_*.json
