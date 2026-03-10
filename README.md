@@ -96,4 +96,104 @@ docker-compose up -d --build
   - `test_js_treesitter.js`: Tree-sitter로 파서 엔진 통일 후 JavaScript 파싱 동작 테스트
 - **`debug_java.js`**: JavaParser 사용 시, 시스템 Java 컴파일러(`javac`)의 동작 상태를 점검하기 위한 디버깅용 파일입니다.
 - **`reproduce_error.js`**: Tree-sitter 도입 시 잘못된 입력(빈 문자열, `null` 등)을 넣었을 때 에러 로직을 파악하고 예외를 처리하기 위한 테스트용 코드입니다.
-- **`test_endpoints.sh`**: curl 명령어로 과거 언어별 엔드포인트들(`/parse/ts`, `/parse/py`, `/parse/java`)의 동작 결괏값을 점검하기 위해 쓰인 테스트 쉘 스크립트입니다.
+- **`test_endpoints.sh`**: 양쪽 파서 컨테이너에 zip을 보내고 벤치마크 결과를 비교하는 쉘 스크립트입니다.
+- **`src/benchmark.js`**: 파서 성능 벤치마크 측정 모듈 (Latency, LOC, Throughput, Memory, Robustness).
+
+## 📊 벤치마크 (Parser Performance Benchmark)
+
+### 측정 항목
+
+| Metric | 설명 |
+|--------|------|
+| **Parsing Latency** | 파싱 소요 시간 (초 단위, `process.hrtime.bigint()` 기반 고정밀) |
+| **Throughput** | LOC/sec, files/sec |
+| **Memory** | Peak RSS, Peak Heap (MB) |
+| **Success Rate** | 파싱 성공률 (Robustness / 파싱 커버리지) |
+| **Error Nodes** | Tree-sitter의 ERROR 노드 개수 (error-tolerant parsing 측정) |
+| **Language Breakdown** | 언어별 파일 수, LOC, 시간, 성공률 |
+
+### 실행 방법
+
+#### 1. Docker Compose로 양쪽 컨테이너 실행
+```bash
+docker-compose up -d --build
+```
+
+> ⚠️ 양 컨테이너 모두 `cpus: 2`, `memory: 4g`로 제한되어 공정한 비교가 가능합니다.
+
+#### 2. 벤치마크 실행 (Node.js 스크립트)
+```bash
+# 기본 실행 (samples 디렉토리 대상)
+node test_scripts/test_benchmark.js
+
+# 특정 디렉토리, 5회 반복
+node test_scripts/test_benchmark.js --dir /path/to/code --repeat 5
+
+# 레포 이름 지정
+node test_scripts/test_benchmark.js --dir ./my-project --repo my-project --repeat 10
+```
+
+#### 3. 벤치마크 실행 (Shell 스크립트)
+```bash
+# 기본
+./test_endpoints.sh
+
+# 특정 디렉토리, 3회 반복
+./test_endpoints.sh /path/to/code 3
+```
+
+### 벤치마크 API 엔드포인트
+
+| Endpoint | Method | 설명 |
+|----------|--------|------|
+| `/analyze?repoName=xxx` | POST | 파싱 + 벤치마크 결과 포함 응답 |
+| `/benchmark/results` | GET | 저장된 벤치마크 JSON 결과 목록 조회 |
+| `/benchmark/summary` | GET | 누적 벤치마크 CSV 다운로드 |
+
+### 결과 저장 구조
+
+```
+benchmark-results/
+├── treesitter/                      # Tree-sitter 컨테이너 결과
+│   ├── benchmark_tree-sitter_xxx_2026-03-10T...json
+│   └── benchmark_summary.csv
+└── native-ast/                      # Native AST 컨테이너 결과
+    ├── benchmark_native-ast_xxx_2026-03-10T...json
+    └── benchmark_summary.csv
+```
+
+### CSV 포맷 예시
+
+```csv
+timestamp,parser,repo,files,success,failed,success_rate,loc,parse_time_sec,total_time_sec,loc_per_sec,files_per_sec,peak_rss_mb,peak_heap_mb
+2026-03-10T09:00:00Z,tree-sitter,my-repo,182,180,2,98.9,23812,1.23,1.55,19359,147.97,124.5,45.2
+2026-03-10T09:00:05Z,native-ast,my-repo,182,165,17,90.66,23812,3.82,4.10,6234,47.64,198.3,78.1
+```
+
+### JSON 결과 포맷 예시
+
+```json
+{
+  "parser": "tree-sitter",
+  "repo": "my-project",
+  "timestamp": "2026-03-10T09:00:00.000Z",
+  "summary": {
+    "totalFiles": 182,
+    "successFiles": 180,
+    "failedFiles": 2,
+    "successRate": 98.9,
+    "totalLoc": 23812,
+    "parseTimeSec": 1.23,
+    "totalTimeSec": 1.55,
+    "throughput": { "locPerSec": 19359, "filesPerSec": 147.97 },
+    "memory": { "peakRssMB": 124.5, "peakHeapMB": 45.2 }
+  },
+  "languageBreakdown": {
+    "java": { "files": 50, "loc": 8000, "successFiles": 50, "failedFiles": 0, "totalTimeMs": 320 },
+    "typescript": { "files": 80, "loc": 12000, "successFiles": 78, "failedFiles": 2, "totalTimeMs": 450 }
+  },
+  "fileDetails": [
+    { "file": "src/App.ts", "language": "typescript", "status": "success", "loc": 120, "parseTimeMs": 2.31, "errorNodes": 0, "error": null }
+  ]
+}
+```
