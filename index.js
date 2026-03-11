@@ -254,9 +254,8 @@ app.post('/analyze', upload.single('file'), async (req, res) => {
         const zip = new AdmZip(req.file.path);
         zip.extractAllTo(extractPath, true);
 
-        bench.startParsing();
         const rootNode = processDirectory(extractPath, bench);
-        bench.endParsing();
+        bench.endTotal();
 
         const repoName = req.body?.repoName
             || req.query?.repoName
@@ -298,9 +297,8 @@ app.post('/analyze-raw', upload.single('file'), async (req, res) => {
         const zip = new AdmZip(req.file.path);
         zip.extractAllTo(extractPath, true);
 
-        bench.startParsing();
         const rootNode = processDirectoryCustomAst(extractPath, bench);
-        bench.endParsing();
+        bench.endTotal();
 
         const repoName = req.body?.repoName
             || req.query?.repoName

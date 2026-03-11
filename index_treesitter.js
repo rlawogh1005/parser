@@ -26,8 +26,7 @@ const PORT = process.env.PORT || 3001;
 app.use(bodyParser.json({ limit: '100mb' }));
 
 /**
- * Tree-sitter 노드를 Raw JSON으로 재귀 변환
- * 4계층 추출 없이, tree-sitter가 생성하는 전체 AST를 그대로 반환한다.
+ * Tree-sitter 노드를 Raw JSON으로 재귀 변환, tree-sitter가 생성하는 전체 AST를 그대로 반환한다.
  */
 function treeToRawJson(node) {
     const result = {
@@ -159,10 +158,8 @@ app.post('/analyze', upload.single('file'), async (req, res) => {
         const zip = new AdmZip(req.file.path);
         zip.extractAllTo(extractPath, true);
 
-        // ── 파싱 구간만 측정 (unzip 제외)
-        bench.startParsing();
         const rootNode = processDirectory(extractPath, bench);
-        bench.endParsing();
+        bench.endTotal();
 
         // ── 레포 이름 추출
         const repoName = req.body?.repoName

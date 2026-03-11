@@ -120,6 +120,7 @@ app.post('/analyze', upload.single('file'), async (req, res) => {
         return res.status(400).json({ error: "No file uploaded." });
     }
 
+    // zip 파일 해제용 임시 디렉토리 경로
     const extractPath = path.join(__dirname, 'temp_raw_' + Date.now() + '_' + Math.random().toString(36).substring(7));
 
     // ── 벤치마크 수집기 생성
@@ -130,10 +131,8 @@ app.post('/analyze', upload.single('file'), async (req, res) => {
         const zip = new AdmZip(req.file.path);
         zip.extractAllTo(extractPath, true);
 
-        // ── 파싱 구간만 측정 (unzip 제외)
-        bench.startParsing();
         const rootNode = processDirectoryCustomAst(extractPath, bench);
-        bench.endParsing();
+        bench.endTotal();
 
         // ── 레포 이름 추출
         const repoName = req.body?.repoName

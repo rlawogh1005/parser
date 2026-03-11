@@ -2,7 +2,7 @@
  * Benchmark Module — 파서 성능 측정 도구
  *
  * 측정 항목:
- *   1. Parsing Latency (초 단위, hrtime 기반 고정밀)
+ *   1. Parsing Latency (개별 파일 파싱 시간의 합산, 파일 I/O 제외)
  *   2. File count / LOC
  *   3. Success / Failure count & rate (Robustness)
  *   4. Throughput (LOC/sec, files/sec)
@@ -14,9 +14,8 @@
  *   const bench = new BenchmarkCollector('tree-sitter');
  *   bench.startTotal();
  *   // ... unzip ...
- *   bench.startParsing();
- *   // ... parse files (각 파일 파싱 시 bench.recordFile(...) 호출) ...
- *   bench.endParsing();
+ *   // ... parse files (각 파일 파싱 시 BenchmarkCollector.measure() + bench.recordFile(...) 호출) ...
+ *   bench.endTotal();
  *   const result = bench.getResult(repoName);
  */
 
@@ -36,10 +35,10 @@ class BenchmarkCollector {
         this.successFiles = 0;
         this.failedFiles = 0;
 
-        // Timing (nanoseconds)
+        // Timing
         this._totalStartNs = null;
-        this._parseStartNs = null;
-        this._parseEndNs = null;
+        this._totalEndNs = null;
+        this._totalParseTimeMs = 0; // 개별 파일 순수 파싱 시간(measure)의 합산
 
         // Memory snapshot
         this._memBefore = null;
@@ -58,15 +57,9 @@ class BenchmarkCollector {
         this._memPeak = { ...this._memBefore };
     }
 
-    /** 파싱만 시작 (unzip 완료 후 호출) */
-    startParsing() {
-        this._parseStartNs = process.hrtime.bigint();
-        this._updatePeakMemory();
-    }
-
-    /** 파싱 종료 */
-    endParsing() {
-        this._parseEndNs = process.hrtime.bigint();
+    /** 전체 요청 종료 */
+    endTotal() {
+        this._totalEndNs = process.hrtime.bigint();
         this._updatePeakMemory();
     }
 
@@ -101,6 +94,7 @@ class BenchmarkCollector {
         this.languageStats[lang].files++;
         this.languageStats[lang].loc += loc;
         this.languageStats[lang].totalTimeMs += elapsedMs;
+        this._totalParseTimeMs += elapsedMs;
         if (success) {
             this.languageStats[lang].successFiles++;
         } else {
@@ -133,13 +127,12 @@ class BenchmarkCollector {
     getResult(repoName) {
         this._updatePeakMemory();
 
-        const parseTimeNs = this._parseEndNs && this._parseStartNs
-            ? Number(this._parseEndNs - this._parseStartNs)
-            : 0;
-        const parseTimeSec = parseTimeNs / 1e9;
+        // 순수 파싱 시간 = 개별 파일별 BenchmarkCollector.measure() 결과의 합산
+        // 파일 시스템 순회(readdir, stat, readFile) 시간은 포함되지 않음
+        const parseTimeSec = this._totalParseTimeMs / 1000;
 
-        const totalTimeNs = this._parseEndNs && this._totalStartNs
-            ? Number(this._parseEndNs - this._totalStartNs)
+        const totalTimeNs = this._totalEndNs && this._totalStartNs
+            ? Number(this._totalEndNs - this._totalStartNs)
             : 0;
         const totalTimeSec = totalTimeNs / 1e9;
 
