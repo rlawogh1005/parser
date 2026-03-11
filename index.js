@@ -119,7 +119,7 @@ function processDirectory(currentPath, bench) {
             const loc = BenchmarkCollector.countLoc(code);
 
             try {
-                const { result: tree, elapsedMs } = BenchmarkCollector.measure(() => {
+                const { result: tree, ms } = BenchmarkCollector.measure(() => {
                     parser.setLanguage(language);
                     return parser.parse(code);
                 });
@@ -131,12 +131,12 @@ function processDirectory(currentPath, bench) {
                     errorNodes = countErrorNodes(tree.rootNode);
                 }
 
-                bench.recordFile(currentPath, true, loc, elapsedMs, null, errorNodes);
+                bench.record(currentPath, loc, ms);
 
                 return { type: 'FILE', name, children: structureChildren };
             } catch (astErr) {
                 console.error(`[AST Error] File: ${currentPath}, Size: ${code.length}, Error: ${astErr.message}`);
-                bench.recordFile(currentPath, false, loc, 0, astErr.message);
+                bench.record(currentPath, loc, 0);
                 return { type: 'FILE', name, children: [], error: astErr.message };
             }
         }
@@ -176,7 +176,7 @@ function processDirectoryCustomAst(currentPath, bench) {
             try {
                 let parsedResult;
 
-                const { result, elapsedMs } = BenchmarkCollector.measure(() => {
+                const { result, ms } = BenchmarkCollector.measure(() => {
                     if (ext === '.java') {
                         const javaSource = path.join(__dirname, 'src', 'ParseJava.java');
                         const javaLib = path.join(__dirname, 'lib', 'javaparser-core.jar');
@@ -219,12 +219,12 @@ function processDirectoryCustomAst(currentPath, bench) {
                     }
                 }
 
-                bench.recordFile(currentPath, true, loc, elapsedMs);
+                bench.record(currentPath, loc, ms);
 
                 return { type: 'file', name, filePath: currentPath, ast: parsedResult };
             } catch (astErr) {
                 console.error(`[Custom AST Error] File: ${currentPath}, Error: ${astErr.message}`);
-                bench.recordFile(currentPath, false, loc, 0, astErr.message);
+                bench.record(currentPath, loc, 0);
                 return { type: 'file', name, filePath: currentPath, error: astErr.message };
             }
         }
@@ -263,8 +263,7 @@ app.post('/analyze', upload.single('file'), async (req, res) => {
             || 'unknown';
 
         const benchResult = bench.getResult(repoName);
-        BenchmarkCollector.printCILog(benchResult);
-        BenchmarkCollector.saveResult(benchResult);
+        BenchmarkCollector.save(benchResult);
 
         if (fs.existsSync(extractPath)) fs.rmSync(extractPath, { recursive: true, force: true });
         if (fs.existsSync(req.file.path)) fs.unlinkSync(req.file.path);
@@ -306,8 +305,7 @@ app.post('/analyze-raw', upload.single('file'), async (req, res) => {
             || 'unknown';
 
         const benchResult = bench.getResult(repoName);
-        BenchmarkCollector.printCILog(benchResult);
-        BenchmarkCollector.saveResult(benchResult);
+        BenchmarkCollector.save(benchResult);
 
         if (fs.existsSync(extractPath)) fs.rmSync(extractPath, { recursive: true, force: true });
         if (fs.existsSync(req.file.path)) fs.unlinkSync(req.file.path);
@@ -323,35 +321,7 @@ app.post('/analyze-raw', upload.single('file'), async (req, res) => {
     }
 });
 
-// ─── 벤치마크 결과 조회 엔드포인트 ─────────────────────────
 
-app.get('/benchmark/results', (req, res) => {
-    const resultsDir = '/app/benchmark-results';
-    if (!fs.existsSync(resultsDir)) {
-        return res.json({ results: [] });
-    }
-    const files = fs.readdirSync(resultsDir)
-        .filter(f => f.endsWith('.json'))
-        .sort()
-        .reverse();
-
-    const results = files.map(f => {
-        try {
-            return JSON.parse(fs.readFileSync(path.join(resultsDir, f), 'utf8'));
-        } catch { return null; }
-    }).filter(Boolean);
-
-    res.json({ results });
-});
-
-app.get('/benchmark/summary', (req, res) => {
-    const csvPath = '/app/benchmark-results/benchmark_summary.csv';
-    if (!fs.existsSync(csvPath)) {
-        return res.status(404).json({ error: 'No benchmark data yet' });
-    }
-    const csv = fs.readFileSync(csvPath, 'utf8');
-    res.type('text/csv').send(csv);
-});
 
 // Health check
 app.get('/health', (req, res) => res.send('OK'));

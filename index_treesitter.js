@@ -108,7 +108,7 @@ function processDirectory(currentPath, bench) {
 
             try {
                 // ── 개별 파일 파싱 시간 측정
-                const { result: tree, elapsedMs } = BenchmarkCollector.measure(() => {
+                const { result: tree, ms } = BenchmarkCollector.measure(() => {
                     parser.setLanguage(language);
                     return parser.parse(code);
                 });
@@ -121,14 +121,14 @@ function processDirectory(currentPath, bench) {
                 }
 
                 // ── 벤치마크 기록
-                bench.recordFile(currentPath, true, loc, elapsedMs, null, errorNodes);
+                bench.record(currentPath, loc, ms);
 
                 return { type: 'file', name, filePath: currentPath, ast: rawAst };
             } catch (astErr) {
                 console.error(`[AST Error] File: ${currentPath}, Size: ${code.length}, Error: ${astErr.message}`);
 
                 // ── 실패도 기록
-                bench.recordFile(currentPath, false, loc, 0, astErr.message);
+                bench.record(currentPath, loc, 0);
 
                 return { type: 'file', name, filePath: currentPath, error: astErr.message };
             }
@@ -167,10 +167,9 @@ app.post('/analyze', upload.single('file'), async (req, res) => {
             || path.basename(req.file.originalname, '.zip')
             || 'unknown';
 
-        // ── 벤치마크 결과 생성 & 저장
+        // ── 벤치마크 결과 생성
         const benchResult = bench.getResult(repoName);
-        BenchmarkCollector.printCILog(benchResult);
-        BenchmarkCollector.saveResult(benchResult);
+        BenchmarkCollector.save(benchResult);
 
         // 임시 파일 정리
         if (fs.existsSync(extractPath)) fs.rmSync(extractPath, { recursive: true, force: true });
@@ -187,35 +186,7 @@ app.post('/analyze', upload.single('file'), async (req, res) => {
     }
 });
 
-// ─── 벤치마크 결과 조회 엔드포인트 ─────────────────────────
 
-app.get('/benchmark/results', (req, res) => {
-    const resultsDir = '/app/benchmark-results';
-    if (!fs.existsSync(resultsDir)) {
-        return res.json({ results: [] });
-    }
-    const files = fs.readdirSync(resultsDir)
-        .filter(f => f.endsWith('.json'))
-        .sort()
-        .reverse();
-
-    const results = files.map(f => {
-        try {
-            return JSON.parse(fs.readFileSync(path.join(resultsDir, f), 'utf8'));
-        } catch { return null; }
-    }).filter(Boolean);
-
-    res.json({ results });
-});
-
-app.get('/benchmark/summary', (req, res) => {
-    const csvPath = '/app/benchmark-results/benchmark_summary.csv';
-    if (!fs.existsSync(csvPath)) {
-        return res.status(404).json({ error: 'No benchmark data yet' });
-    }
-    const csv = fs.readFileSync(csvPath, 'utf8');
-    res.type('text/csv').send(csv);
-});
 
 app.get('/health', (req, res) => res.send('OK (TreeSitter)'));
 app.listen(PORT, () => console.log(`TreeSitter Parser ready on port ${PORT}`));
