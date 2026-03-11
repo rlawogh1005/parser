@@ -263,7 +263,7 @@ app.post('/analyze', upload.single('file'), async (req, res) => {
             || 'unknown';
 
         const benchResult = bench.getResult(repoName);
-        BenchmarkCollector.save(benchResult);
+        BenchmarkCollector.save(benchResult, rootNode);
 
         if (fs.existsSync(extractPath)) fs.rmSync(extractPath, { recursive: true, force: true });
         if (fs.existsSync(req.file.path)) fs.unlinkSync(req.file.path);
@@ -305,7 +305,7 @@ app.post('/analyze-raw', upload.single('file'), async (req, res) => {
             || 'unknown';
 
         const benchResult = bench.getResult(repoName);
-        BenchmarkCollector.save(benchResult);
+        BenchmarkCollector.save(benchResult, rootNode);
 
         if (fs.existsSync(extractPath)) fs.rmSync(extractPath, { recursive: true, force: true });
         if (fs.existsSync(req.file.path)) fs.unlinkSync(req.file.path);

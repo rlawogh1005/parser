@@ -103,25 +103,45 @@ class BenchmarkCollector {
     }
 
     /**
-     * 결과를 JSON 파일로 저장 + CSV 누적
-     * @param {object} result - getResult() 반환값
-     * @param {string} dir    - 저장 디렉토리
-     * @returns {string} 저장된 JSON 파일 경로
+     * 결과를 JSON 파일로 저장 + CSV 누적 + (선택) AST 데이터 저장
+     *
+     * 저장 구조:
+     *   dir/
+     *   ├── stats/   ← 벤치마크 JSON + CSV
+     *   └── ast/     ← AST 데이터 JSON
+     *
+     * @param {object} result  - getResult() 반환값
+     * @param {object} [astData] - 파싱된 AST 트리 (선택)
+     * @param {string} dir     - 루트 저장 디렉토리
+     * @returns {string} 저장된 벤치마크 JSON 파일 경로
      */
-    static save(result, dir = '/app/benchmark-results') {
+    static save(result, astData = null, dir = '/app/benchmark-results') {
         const fs = require('fs');
         const path = require('path');
 
-        if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+        const statsDir = path.join(dir, 'stats');
+        const astDir = path.join(dir, 'ast');
 
-        // JSON 저장
+        if (!fs.existsSync(statsDir)) fs.mkdirSync(statsDir, { recursive: true });
+
         const safe = (result.repo || 'unknown').replace(/[^a-zA-Z0-9_-]/g, '_');
         const ts = result.timestamp.replace(/[:.]/g, '-');
-        const jsonPath = path.join(dir, `bench_${result.parser}_${safe}_${ts}.json`);
+        const tag = `${result.parser}_${safe}_${ts}`;
+
+        // 벤치마크 JSON 저장 → stats/
+        const jsonPath = path.join(statsDir, `bench_${tag}.json`);
         fs.writeFileSync(jsonPath, JSON.stringify(result, null, 2));
 
-        // CSV 누적 (언어별 한 줄씩)
-        const csvPath = path.join(dir, 'benchmark.csv');
+        // AST 데이터 JSON 저장 → ast/
+        if (astData) {
+            if (!fs.existsSync(astDir)) fs.mkdirSync(astDir, { recursive: true });
+            const astPath = path.join(astDir, `ast_${tag}.json`);
+            fs.writeFileSync(astPath, JSON.stringify(astData, null, 2));
+            console.log(`[Benchmark] AST saved: ${astPath}`);
+        }
+
+        // CSV 누적 → stats/
+        const csvPath = path.join(statsDir, 'benchmark.csv');
         const header = 'timestamp,parser,repo,language,files,loc,parse_sec,total_sec,peak_rss_mb,peak_heap_mb\n';
 
         const rows = Object.entries(result.languages).map(([lang, s]) =>

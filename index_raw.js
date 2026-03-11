@@ -142,7 +142,7 @@ app.post('/analyze', upload.single('file'), async (req, res) => {
 
         // ── 벤치마크 결과 생성
         const benchResult = bench.getResult(repoName);
-        BenchmarkCollector.save(benchResult);
+        BenchmarkCollector.save(benchResult, rootNode);
 
         // 임시 파일 정리
         if (fs.existsSync(extractPath)) fs.rmSync(extractPath, { recursive: true, force: true });
