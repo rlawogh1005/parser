@@ -157,32 +157,37 @@ class BenchmarkCollector {
      *
      * 저장 구조:
      *   dir/
-     *   ├── stats/   ← 벤치마크 JSON + CSV
-     *   └── ast/     ← AST 데이터 JSON
+     *   └── {parserName}/
+     *       ├── stats/   ← 벤치마크 JSON + CSV
+     *       └── ast/     ← AST 데이터 JSON
      *
      * @param {object} result  - getResult() 반환값
      * @param {object} [astData] - 파싱된 AST 트리 (선택)
-     * @param {string} dir     - 루트 저장 디렉토리
+     * @param {string} baseDir - 루트 저장 디렉토리
      * @returns {string} 저장된 벤치마크 JSON 파일 경로
      */
-    static save(result, astData = null, dir = '/app/benchmark-results') {
+    static save(result, astData = null, baseDir = null) {
         const fs = require('fs');
         const path = require('path');
 
-        const statsDir = path.join(dir, 'stats');
-        const astDir = path.join(dir, 'ast');
+        // 기본 경로: 프로젝트 루트의 benchmark-results
+        const rootDir = baseDir || path.join(process.cwd(), 'benchmark-results');
+        const parserDir = path.join(rootDir, result.parser);
+        const statsDir = path.join(parserDir, 'stats');
+        const astDir = path.join(parserDir, 'ast');
 
         if (!fs.existsSync(statsDir)) fs.mkdirSync(statsDir, { recursive: true });
 
-        const safe = (result.repo || 'unknown').replace(/[^a-zA-Z0-9_-]/g, '_');
-        const ts = result.timestamp.replace(/[:.]/g, '-');
-        const tag = `${result.parser}_${safe}_${ts}`;
+        const safeRepo = (result.repo || 'unknown').replace(/[^a-zA-Z0-9_-]/g, '_');
+        const ts = result.timestamp.replace(/[:.]/g, '-').split('T')[0]; // 날짜 위주로 요약
+        const fullTs = result.timestamp.replace(/[:.]/g, '-');
+        const tag = `${safeRepo}_${fullTs}`;
 
-        // 벤치마크 JSON 저장 → stats/
+        // 벤치마크 JSON 저장 → {parser}/stats/
         const jsonPath = path.join(statsDir, `bench_${tag}.json`);
         fs.writeFileSync(jsonPath, JSON.stringify(result, null, 2));
 
-        // AST 데이터 JSON 저장 → ast/
+        // AST 데이터 JSON 저장 → {parser}/ast/
         if (astData) {
             if (!fs.existsSync(astDir)) fs.mkdirSync(astDir, { recursive: true });
             const astPath = path.join(astDir, `ast_${tag}.json`);
@@ -190,7 +195,7 @@ class BenchmarkCollector {
             console.log(`[Benchmark] AST saved: ${astPath}`);
         }
 
-        // CSV 누적 → stats/
+        // CSV 누적 → {parser}/stats/benchmark.csv
         const csvPath = path.join(statsDir, 'benchmark.csv');
         const header = 'timestamp,parser,repo,language,files,loc,nodes,max_depth,parse_sec,total_sec,peak_rss_mb,peak_heap_mb\n';
 
