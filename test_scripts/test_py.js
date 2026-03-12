@@ -7,7 +7,6 @@ const fs = require('fs');
 const LIB_DIR = path.join(__dirname, 'lib');
 
 const BIN_DIR = path.join(__dirname, 'bin');
-const JAVA_CP = `${path.join(LIB_DIR, 'javaparser-core.jar')}${path.delimiter}${BIN_DIR}`;
 
 // 샘플 파일 경로
 const SAMPLE_DIR = path.join(__dirname, 'samples');

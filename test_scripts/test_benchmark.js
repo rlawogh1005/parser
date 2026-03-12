@@ -117,8 +117,8 @@ function sendZipToParser(baseUrl, zipBuffer, repoName) {
 // ─── 결과 비교 출력 ──────────────────────────────────────
 
 function printComparison(tsResult, nativeResult) {
-    const ts = tsResult?.benchmark?.summary;
-    const na = nativeResult?.benchmark?.summary;
+    const ts = tsResult?.benchmark;
+    const na = nativeResult?.benchmark;
 
     if (!ts || !na) {
         console.error('[Error] Benchmark data missing from one or both parsers.');
@@ -132,17 +132,14 @@ function printComparison(tsResult, nativeResult) {
     console.log('╠═══════════════════════╪═══════════════════╪═══════════════════════╣');
 
     const rows = [
-        ['Files', ts.totalFiles, na.totalFiles],
-        ['Success', ts.successFiles, na.successFiles],
-        ['Failed', ts.failedFiles, na.failedFiles],
-        ['Success Rate', `${ts.successRate}%`, `${na.successRate}%`],
-        ['LOC', ts.totalLoc, na.totalLoc],
+        ['Files', ts.files, na.files],
+        ['LOC', ts.loc, na.loc],
+        ['Total Nodes', ts.totalNodes, na.totalNodes],
+        ['Max Depth', ts.maxDepth, na.maxDepth],
         ['Parse Time', `${ts.parseTimeSec}s`, `${na.parseTimeSec}s`],
         ['Total Time', `${ts.totalTimeSec}s`, `${na.totalTimeSec}s`],
-        ['LOC/sec', ts.throughput.locPerSec, na.throughput.locPerSec],
-        ['Files/sec', ts.throughput.filesPerSec, na.throughput.filesPerSec],
-        ['Peak RSS (MB)', ts.memory.peakRssMB, na.memory.peakRssMB],
-        ['Peak Heap (MB)', ts.memory.peakHeapMB, na.memory.peakHeapMB]
+        ['Peak RSS (MB)', ts.peakRssMB, na.peakRssMB],
+        ['Peak Heap (MB)', ts.peakHeapMB, na.peakHeapMB]
     ];
 
     for (const [label, tsVal, naVal] of rows) {
@@ -222,8 +219,8 @@ function printComparison(tsResult, nativeResult) {
         console.log('  AGGREGATE STATISTICS (across all runs)');
         console.log('═══════════════════════════════════════════════════════');
 
-        const tsTimes = allTsResults.map(r => r.benchmark?.summary?.parseTimeSec).filter(Boolean);
-        const naTimes = allNaResults.map(r => r.benchmark?.summary?.parseTimeSec).filter(Boolean);
+        const tsTimes = allTsResults.map(r => r.benchmark?.parseTimeSec).filter(v => v !== undefined);
+        const naTimes = allNaResults.map(r => r.benchmark?.parseTimeSec).filter(v => v !== undefined);
 
         const avg = arr => arr.reduce((a, b) => a + b, 0) / arr.length;
         const std = arr => {

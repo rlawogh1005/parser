@@ -114,14 +114,18 @@ function processDirectory(currentPath, bench) {
                 });
 
                 let rawAst = null;
-                let errorNodes = 0;
+                let nodeCount = 0;
+                let maxDepth = 0;
+
                 if (tree.rootNode) {
                     rawAst = treeToRawJson(tree.rootNode);
-                    errorNodes = countErrorNodes(tree.rootNode);
+                    const stats = BenchmarkCollector.getAstStats(rawAst);
+                    nodeCount = stats.nodeCount;
+                    maxDepth = stats.maxDepth;
                 }
 
                 // ── 벤치마크 기록
-                bench.record(currentPath, loc, ms);
+                bench.record(currentPath, loc, ms, nodeCount, maxDepth);
 
                 return { type: 'file', name, filePath: currentPath, ast: rawAst };
             } catch (astErr) {

@@ -93,7 +93,28 @@ function processDirectoryCustomAst(currentPath, bench) {
                 }
 
                 // ── 벤치마크 기록
-                bench.record(currentPath, loc, ms);
+                let nodeCount = 0;
+                let maxDepth = 0;
+
+                if (parsedResult) {
+                    if (typeof parsedResult === 'object') {
+                        const stats = BenchmarkCollector.getAstStats(parsedResult);
+                        nodeCount = stats.nodeCount;
+                        maxDepth = stats.maxDepth;
+                    } else if (typeof parsedResult === 'string') {
+                        // Heuristic for raw string dumps (e.g. ast.dump in python)
+                        const lines = parsedResult.split('\n');
+                        nodeCount = lines.filter(l => /[A-Z][a-zA-Z0-9]*\(/.test(l)).length || 1;
+                        maxDepth = 1;
+                        lines.forEach(l => {
+                            const indent = l.match(/^\s*/)[0].length;
+                            const d = Math.floor(indent / 4) + 1;
+                            if (d > maxDepth) maxDepth = d;
+                        });
+                    }
+                }
+
+                bench.record(currentPath, loc, ms, nodeCount, maxDepth);
 
                 return { type: 'file', name, filePath: currentPath, ast: parsedResult };
             } catch (astErr) {

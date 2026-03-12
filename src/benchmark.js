@@ -19,11 +19,13 @@ class BenchmarkCollector {
         this.parserName = parserName;
         this.totalFiles = 0;
         this.totalLoc = 0;
+        this.totalNodes = 0;
+        this.maxDepth = 0;
         this._totalParseTimeMs = 0;
         this._totalStartNs = null;
         this._totalEndNs = null;
         this._memPeak = null;
-        this._langs = {};   // { [lang]: { files, loc, parseTimeMs } }
+        this._langs = {};   // { [lang]: { files, loc, parseTimeMs, nodes, maxDepth } }
     }
 
     /** 전체 측정 시작 */
@@ -43,18 +45,24 @@ class BenchmarkCollector {
      * @param {string} filePath - 파일 경로 (확장자로 언어 분류)
      * @param {number} loc      - 라인 수
      * @param {number} ms       - 파싱 소요 시간 (ms)
+     * @param {number} nodeCount - 전체 노드 수
+     * @param {number} maxDepth  - 트리 최대 깊이
      */
-    record(filePath, loc, ms) {
+    record(filePath, loc, ms, nodeCount = 0, maxDepth = 0) {
         this.totalFiles++;
         this.totalLoc += loc;
         this._totalParseTimeMs += ms;
+        this.totalNodes += nodeCount;
+        if (maxDepth > this.maxDepth) this.maxDepth = maxDepth;
 
         const ext = require('path').extname(filePath);
         const lang = EXT_LANG[ext] || ext || 'unknown';
-        if (!this._langs[lang]) this._langs[lang] = { files: 0, loc: 0, parseTimeMs: 0 };
+        if (!this._langs[lang]) this._langs[lang] = { files: 0, loc: 0, parseTimeMs: 0, nodes: 0, maxDepth: 0 };
         this._langs[lang].files++;
         this._langs[lang].loc += loc;
         this._langs[lang].parseTimeMs += ms;
+        this._langs[lang].nodes += nodeCount;
+        if (maxDepth > this._langs[lang].maxDepth) this._langs[lang].maxDepth = maxDepth;
 
         if (this.totalFiles % 50 === 0) this._updatePeak();
     }
@@ -71,6 +79,44 @@ class BenchmarkCollector {
         return code ? code.split('\n').length : 0;
     }
 
+    /** AST 통계 (노드 수, 깊이) 계산 */
+    static getAstStats(ast) {
+        let nodeCount = 0;
+        let maxDepth = 0;
+
+        function traverse(node, depth) {
+            if (!node || typeof node !== 'object') return;
+            nodeCount++;
+            if (depth > maxDepth) maxDepth = depth;
+
+            // 'children' 배열이 있으면 순회 (Tree-sitter, TS)
+            if (Array.isArray(node.children)) {
+                for (const child of node.children) {
+                    traverse(child, depth + 1);
+                }
+            }
+            // 그 외의 경우 (JavaParser JSON 구조 등)
+            else {
+                for (const key in node) {
+                    if (key === 'parent') continue; // 무한루프 방지
+                    const value = node[key];
+                    if (value && typeof value === 'object') {
+                        if (Array.isArray(value)) {
+                            for (const item of value) {
+                                if (item && typeof item === 'object') traverse(item, depth + 1);
+                            }
+                        } else {
+                            traverse(value, depth + 1);
+                        }
+                    }
+                }
+            }
+        }
+
+        traverse(ast, 1);
+        return { nodeCount, maxDepth };
+    }
+
     /** 최종 결과 반환 */
     getResult(repoName) {
         this._updatePeak();
@@ -84,6 +130,8 @@ class BenchmarkCollector {
             languages[lang] = {
                 files: s.files,
                 loc: s.loc,
+                nodes: s.nodes,
+                maxDepth: s.maxDepth,
                 parseTimeSec: Math.round(s.parseTimeMs / 1000 * 1000) / 1000,
             };
         }
@@ -94,6 +142,8 @@ class BenchmarkCollector {
             timestamp: new Date().toISOString(),
             files: this.totalFiles,
             loc: this.totalLoc,
+            totalNodes: this.totalNodes,
+            maxDepth: this.maxDepth,
             parseTimeSec: Math.round(parseSec * 1000) / 1000,
             totalTimeSec: Math.round(totalNs / 1e6) / 1000,
             peakRssMB: this._mb(this._memPeak?.rss),
@@ -142,11 +192,12 @@ class BenchmarkCollector {
 
         // CSV 누적 → stats/
         const csvPath = path.join(statsDir, 'benchmark.csv');
-        const header = 'timestamp,parser,repo,language,files,loc,parse_sec,total_sec,peak_rss_mb,peak_heap_mb\n';
+        const header = 'timestamp,parser,repo,language,files,loc,nodes,max_depth,parse_sec,total_sec,peak_rss_mb,peak_heap_mb\n';
 
         const rows = Object.entries(result.languages).map(([lang, s]) =>
             [result.timestamp, result.parser, result.repo, lang,
-            s.files, s.loc, s.parseTimeSec, result.totalTimeSec,
+            s.files, s.loc, s.nodes, s.maxDepth,
+            s.parseTimeSec, result.totalTimeSec,
             result.peakRssMB, result.peakHeapMB].join(',')
         ).join('\n') + '\n';
 
